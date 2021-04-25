@@ -53,6 +53,25 @@ public class PropertyWatcher
 			if (resource != null)
 			{
 				config = new File(resource.toURI());
+				loadProperties(false);
+
+				// Then check if there's another version in the external data directory
+				String path = get("config.folder");
+				if (path != null)
+				{
+					File folder = new File(path);
+					if (folder.exists() && folder.isDirectory())
+					{
+						File potential = new File(folder, PROPERTIES_FILE);
+
+						if (potential.exists() && potential.isFile())
+						{
+							// Use it
+							config = potential;
+						}
+					}
+				}
+
 				// Finally, load it properly. This is either the original file or the external file.
 				loadProperties(true);
 
