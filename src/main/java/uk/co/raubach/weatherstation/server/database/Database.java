@@ -37,6 +37,8 @@ public class Database
 		Database.username = username;
 		Database.password = password;
 
+		Logger.getLogger("").info(getDatabaseUrl());
+
 		try
 		{
 			// The newInstance() call is a work around for some
