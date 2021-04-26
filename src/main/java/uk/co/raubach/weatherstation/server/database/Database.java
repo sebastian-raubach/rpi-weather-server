@@ -100,7 +100,7 @@ public class Database
 				// Set up the database initially
 				try
 				{
-					URL url = Database.class.getClassLoader().getResource("uk/co/raubach/weatherstation/server/database/db_setup.sql");
+					URL url = Database.class.getClassLoader().getResource("uk/co/raubach/weatherstation/server/database/init.sql");
 
 					if (url != null)
 					{
