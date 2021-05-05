@@ -86,7 +86,7 @@ public class Database
 			try (Connection conn = getDirectConnection();
 				 DSLContext context = Database.getContext(conn))
 			{
-				// Try and see if the `germinatebase` table exists
+				// Try and see if the `measurements` table exists
 				context.selectFrom(MEASUREMENTS)
 					   .fetchAny();
 			}

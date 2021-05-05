@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS `measurements`;
 CREATE TABLE IF NOT EXISTS `measurements` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ambient_temp` decimal(6,2) DEFAULT NULL,
