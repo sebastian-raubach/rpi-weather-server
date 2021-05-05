@@ -68,7 +68,7 @@ public class WeatherStation extends Application
 		corsFilter.setAllowedCredentials(true);
 		corsFilter.setExposedHeaders(Collections.singleton("Content-Disposition"));
 
-		attachToRouter(router, "/{uuid}/data", DataResource.class);
+		attachToRouter(router, "/data", DataResource.class);
 		attachToRouter(router, "/stats/daily", DailyStatsResource.class);
 
 		return corsFilter;

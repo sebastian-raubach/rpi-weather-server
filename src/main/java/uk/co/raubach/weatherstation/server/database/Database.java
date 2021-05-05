@@ -1,5 +1,7 @@
 package uk.co.raubach.weatherstation.server.database;
 
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
 import org.jooq.*;
 import org.jooq.conf.*;
 import org.jooq.exception.DataAccessException;
@@ -36,8 +38,6 @@ public class Database
 		Database.databasePort = databasePort;
 		Database.username = username;
 		Database.password = password;
-
-		Logger.getLogger("").info(getDatabaseUrl());
 
 		try
 		{
@@ -128,6 +128,25 @@ public class Database
 				context.execute("ALTER DATABASE `" + databaseName + "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 			}
 			catch (SQLException | DataAccessException e)
+			{
+				e.printStackTrace();
+			}
+
+			// Run database update
+			try
+			{
+				Logger.getLogger("").log(Level.INFO, "RUNNING FLYWAY on: " + databaseName);
+				Flyway flyway = Flyway.configure()
+									  .table("schema_version")
+									  .validateOnMigrate(false)
+									  .dataSource(getDatabaseUrl(), username, password)
+									  .locations("classpath:uk/co/raubach/weatherstation/server/database/migration")
+									  .baselineOnMigrate(true)
+									  .load();
+				flyway.migrate();
+				flyway.repair();
+			}
+			catch (FlywayException e)
 			{
 				e.printStackTrace();
 			}

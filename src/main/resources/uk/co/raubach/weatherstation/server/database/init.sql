@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `measurements` (
   `wind_speed` decimal(6,2) DEFAULT NULL,
   `wind_gust` decimal(6,2) DEFAULT NULL,
   `rainfall` decimal(6,2) DEFAULT NULL,
+  `pi_temp` decimal(6,2) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;

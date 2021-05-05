@@ -15,6 +15,8 @@ import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measur
 
 public class DataResource extends ServerResource
 {
+	public static final String PARAM_UUID = "uuid";
+
 	private String uuid;
 
 	@Override
@@ -25,7 +27,7 @@ public class DataResource extends ServerResource
 
 		try
 		{
-			this.uuid = getRequestAttributes().get("uuid").toString();
+			this.uuid = getQueryValue(PARAM_UUID);
 		}
 		catch (Exception e)
 		{
