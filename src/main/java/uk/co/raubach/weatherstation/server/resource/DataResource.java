@@ -2,18 +2,21 @@ package uk.co.raubach.weatherstation.server.resource;
 
 import org.jooq.*;
 import org.jooq.impl.UpdatableRecordImpl;
-import org.restlet.data.*;
 import org.restlet.data.Status;
+import org.restlet.data.*;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
 import java.sql.*;
-import java.text.*;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,8 +27,6 @@ public class DataResource extends ServerResource
 	public static final String PARAM_UUID  = "uuid";
 	public static final String PARAM_START = "start";
 	public static final String PARAM_END   = "end";
-
-	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private Timestamp start;
 	private Timestamp end;
@@ -64,9 +65,12 @@ public class DataResource extends ServerResource
 	}
 
 	private synchronized Timestamp getDate(String text)
-		throws ParseException
 	{
-		return new Timestamp(SDF.parse(text).getTime());
+		TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(text);
+		Instant i = Instant.from(ta);
+		Date d = Date.from(i);
+
+		return new Timestamp(d.getTime());
 	}
 
 	@Get("json")
@@ -91,7 +95,8 @@ public class DataResource extends ServerResource
 	}
 
 	@Get("txt")
-	public FileRepresentation getDataPlain() {
+	public FileRepresentation getDataPlain()
+	{
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
@@ -105,14 +110,14 @@ public class DataResource extends ServerResource
 				step.where(MEASUREMENTS.CREATED.le(this.end));
 
 			List<String> data = step.fetchStream()
-				.map(m -> MEASUREMENTS.fieldStream().map(f -> {
-					Object o = m.get(f);
-					if (o != null)
-						return o.toString();
-					else
-						return "";
-				}).collect(Collectors.joining("\t")))
-				.collect(Collectors.toList());
+									.map(m -> MEASUREMENTS.fieldStream().map(f -> {
+										Object o = m.get(f);
+										if (o != null)
+											return o.toString();
+										else
+											return "";
+									}).collect(Collectors.joining("\t")))
+									.collect(Collectors.toList());
 
 			data.add(0, MEASUREMENTS.fieldStream().map(Field::getName).collect(Collectors.joining("\t")));
 
