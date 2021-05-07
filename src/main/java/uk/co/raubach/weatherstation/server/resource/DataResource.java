@@ -13,7 +13,7 @@ import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 import java.io.IOException;
 import java.nio.file.*;
 import java.sql.*;
-import java.time.Instant;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
@@ -66,8 +66,8 @@ public class DataResource extends ServerResource
 
 	private synchronized Timestamp getDate(String text)
 	{
-		TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(text);
-		Instant i = Instant.from(ta);
+		OffsetDateTime odt = OffsetDateTime.parse(text);
+		Instant i = Instant.from(odt);
 		Date d = Date.from(i);
 
 		return new Timestamp(d.getTime());
