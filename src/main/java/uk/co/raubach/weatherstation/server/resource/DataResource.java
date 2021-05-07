@@ -6,8 +6,10 @@ import org.restlet.data.Status;
 import org.restlet.data.*;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.resource.*;
+import uk.co.raubach.weatherstation.resource.MeasurementPojo;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
 import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
@@ -50,9 +53,12 @@ public class DataResource extends ServerResource
 		try
 		{
 			this.start = getDate(getQueryValue(PARAM_START));
+			Logger.getLogger("").info(this.start.toString());
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
+			Logger.getLogger("").severe(e.getLocalizedMessage());
 		}
 
 		try
@@ -135,7 +141,7 @@ public class DataResource extends ServerResource
 	}
 
 	@Post
-	public void postData(Measurements[] measurements)
+	public void postData(MeasurementPojo[] measurements)
 	{
 		if (!Objects.equals(this.uuid, PropertyWatcher.get("client.uuid")))
 		{
@@ -152,7 +158,20 @@ public class DataResource extends ServerResource
 			{
 				Arrays.stream(measurements)
 					  .filter(m -> m.getCreated() != null)
-					  .map(m -> context.newRecord(MEASUREMENTS, m))
+					  .map(m -> {
+					  	MeasurementsRecord record = context.newRecord(MEASUREMENTS);
+					  	record.setAmbientTemp(m.getAmbientTemp());
+					  	record.setGroundTemp(m.getGroundTemp());
+					  	record.setPressure(m.getPressure());
+					  	record.setHumidity(m.getHumidity());
+					  	record.setWindAverage(m.getWindAverage());
+					  	record.setWindSpeed(m.getWindSpeed());
+					  	record.setWindGust(m.getWindGust());
+					  	record.setRainfall(m.getRainfall());
+					  	record.setPiTemp(m.getPiTemp());
+					  	record.setCreated(getDate(m.getCreated()));
+					  	return record;
+					  })
 					  .forEach(UpdatableRecordImpl::store);
 			}
 			catch (SQLException e)
