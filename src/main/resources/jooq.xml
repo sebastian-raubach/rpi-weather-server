@@ -22,6 +22,14 @@
 			<inputSchema>weather_station</inputSchema>
 			<outputSchema>weatherstation_db</outputSchema>
 			<name>org.jooq.meta.mysql.MySQLDatabase</name>
+
+			<forcedTypes>
+				<forcedType>
+					<expression>.*</expression>
+					<name>BOOLEAN</name>
+					<types>.*tinyint.*</types>
+				</forcedType>
+			</forcedTypes>
 		</database>
 
 		<name>uk.co.raubach.weatherstation.server.database.CustomCodegen</name>

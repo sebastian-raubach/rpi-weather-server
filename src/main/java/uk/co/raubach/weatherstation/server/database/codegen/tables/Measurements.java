@@ -40,7 +40,7 @@ import uk.co.raubach.weatherstation.server.database.codegen.tables.records.Measu
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Measurements extends TableImpl<MeasurementsRecord> {
 
-    private static final long serialVersionUID = -1785356869;
+    private static final long serialVersionUID = -908772688;
 
     /**
      * The reference instance of <code>weatherstation_db.measurements</code>
@@ -104,6 +104,11 @@ public class Measurements extends TableImpl<MeasurementsRecord> {
      * The column <code>weatherstation_db.measurements.pi_temp</code>.
      */
     public final TableField<MeasurementsRecord, BigDecimal> PI_TEMP = createField("pi_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.measurements.uploaded_wu</code>.
+     */
+    public final TableField<MeasurementsRecord, Boolean> UPLOADED_WU = createField("uploaded_wu", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.inline("0", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>weatherstation_db.measurements.created</code>.

@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Measurements implements Serializable {
 
-    private static final long serialVersionUID = 648592374;
+    private static final long serialVersionUID = -1937861282;
 
     private Long       id;
     private BigDecimal ambientTemp;
@@ -37,6 +37,7 @@ public class Measurements implements Serializable {
     private BigDecimal windGust;
     private BigDecimal rainfall;
     private BigDecimal piTemp;
+    private Boolean    uploadedWu;
     private Timestamp  created;
 
     public Measurements() {}
@@ -52,6 +53,7 @@ public class Measurements implements Serializable {
         this.windGust = value.windGust;
         this.rainfall = value.rainfall;
         this.piTemp = value.piTemp;
+        this.uploadedWu = value.uploadedWu;
         this.created = value.created;
     }
 
@@ -66,6 +68,7 @@ public class Measurements implements Serializable {
         BigDecimal windGust,
         BigDecimal rainfall,
         BigDecimal piTemp,
+        Boolean    uploadedWu,
         Timestamp  created
     ) {
         this.id = id;
@@ -78,6 +81,7 @@ public class Measurements implements Serializable {
         this.windGust = windGust;
         this.rainfall = rainfall;
         this.piTemp = piTemp;
+        this.uploadedWu = uploadedWu;
         this.created = created;
     }
 
@@ -161,6 +165,14 @@ public class Measurements implements Serializable {
         this.piTemp = piTemp;
     }
 
+    public Boolean getUploadedWu() {
+        return this.uploadedWu;
+    }
+
+    public void setUploadedWu(Boolean uploadedWu) {
+        this.uploadedWu = uploadedWu;
+    }
+
     public Timestamp getCreated() {
         return this.created;
     }
@@ -183,6 +195,7 @@ public class Measurements implements Serializable {
         sb.append(", ").append(windGust);
         sb.append(", ").append(rainfall);
         sb.append(", ").append(piTemp);
+        sb.append(", ").append(uploadedWu);
         sb.append(", ").append(created);
 
         sb.append(")");
