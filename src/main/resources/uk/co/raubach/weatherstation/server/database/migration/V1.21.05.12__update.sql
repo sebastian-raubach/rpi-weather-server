@@ -1,0 +1,2 @@
+ALTER TABLE `measurements`
+MODIFY COLUMN `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP;
