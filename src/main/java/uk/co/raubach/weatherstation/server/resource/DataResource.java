@@ -169,6 +169,7 @@ public class DataResource extends ServerResource
 					  	record.setWindGust(m.getWindGust());
 					  	record.setRainfall(m.getRainfall());
 					  	record.setPiTemp(m.getPiTemp());
+					  	record.setUploadedWu(false);
 					  	record.setCreated(getDate(m.getCreated()));
 					  	return record;
 					  })
