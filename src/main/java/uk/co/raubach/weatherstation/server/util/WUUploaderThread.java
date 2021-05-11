@@ -8,12 +8,15 @@ import uk.co.raubach.weatherstation.server.database.Database;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
 
 public class WUUploaderThread implements Runnable
 {
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	private OkHttpClient client;
 
 	public WUUploaderThread()
@@ -54,6 +57,7 @@ public class WUUploaderThread implements Runnable
 						   HttpUrl.Builder builder = new HttpUrl.Builder()
 							   .addQueryParameter("ID", id)
 							   .addQueryParameter("PASSWORD", password)
+							   .addQueryParameter("dateutc", sdf.format(r.get(MEASUREMENTS.CREATED)))
 							   .addQueryParameter("action", "updateraw");
 
 						   BigDecimal ambientTemp = r.get(MEASUREMENTS.AMBIENT_TEMP);
