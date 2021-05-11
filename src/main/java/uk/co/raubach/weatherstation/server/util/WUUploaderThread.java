@@ -54,7 +54,7 @@ public class WUUploaderThread implements Runnable
 				   .forEach(r -> {
 					   try
 					   {
-						   HttpUrl.Builder builder = new HttpUrl.Builder()
+						   HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder()
 							   .addQueryParameter("ID", id)
 							   .addQueryParameter("PASSWORD", password)
 							   .addQueryParameter("dateutc", sdf.format(r.get(MEASUREMENTS.CREATED)))

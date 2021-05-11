@@ -53,12 +53,9 @@ public class DataResource extends ServerResource
 		try
 		{
 			this.start = getDate(getQueryValue(PARAM_START));
-			Logger.getLogger("").info(this.start.toString());
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			Logger.getLogger("").severe(e.getLocalizedMessage());
 		}
 
 		try
