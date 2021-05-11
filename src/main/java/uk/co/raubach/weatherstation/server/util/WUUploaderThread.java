@@ -118,17 +118,17 @@ public class WUUploaderThread implements Runnable
 
 						   Logger.getLogger("").info("SENDING DATA TO WU: " + request.toString());
 
-						   Response response = client.newCall(request)
-													 .execute();
-
-						   if (response.isSuccessful())
+						   try (Response response = client.newCall(request).execute())
 						   {
-							   r.setUploadedWu(true);
-							   r.store(MEASUREMENTS.UPLOADED_WU);
-						   }
-						   else
-						   {
-							   Logger.getLogger("").warning(response.message());
+							   if (response.isSuccessful())
+							   {
+								   r.setUploadedWu(true);
+								   r.store(MEASUREMENTS.UPLOADED_WU);
+							   }
+							   else
+							   {
+								   Logger.getLogger("").warning(response.message());
+							   }
 						   }
 					   }
 					   catch (Exception e)
