@@ -115,6 +115,8 @@ public class WUUploaderThread implements Runnable
 							   double hum = humidity.doubleValue();
 							   double dewPoint = (temp - (14.55 + 0.114 * temp) * (1 - (0.01 * hum)) - Math.pow(((2.5 + 0.007 * temp) * (1 - (0.01 * hum))), 3) - (15.9 + 0.117 * temp) * Math.pow((1 - (0.01 * hum)), 14));
 
+							   dewPoint = dewPoint * (9 / 5.0) + 32;
+
 							   builder.addQueryParameter("dewptf", Double.toString(dewPoint));
 						   }
 
