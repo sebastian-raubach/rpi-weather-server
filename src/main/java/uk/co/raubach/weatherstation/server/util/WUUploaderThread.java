@@ -55,10 +55,10 @@ public class WUUploaderThread implements Runnable
 					   try
 					   {
 						   HttpUrl.Builder builder = HttpUrl.parse(url).newBuilder()
-							   .addQueryParameter("ID", id)
-							   .addQueryParameter("PASSWORD", password)
-							   .addQueryParameter("dateutc", sdf.format(r.get(MEASUREMENTS.CREATED)))
-							   .addQueryParameter("action", "updateraw");
+															.addQueryParameter("ID", id)
+															.addQueryParameter("PASSWORD", password)
+															.addQueryParameter("dateutc", sdf.format(r.get(MEASUREMENTS.CREATED)))
+															.addQueryParameter("action", "updateraw");
 
 						   BigDecimal ambientTemp = r.get(MEASUREMENTS.AMBIENT_TEMP);
 						   if (ambientTemp != null)
@@ -69,7 +69,7 @@ public class WUUploaderThread implements Runnable
 						   BigDecimal humidity = r.get(MEASUREMENTS.HUMIDITY);
 						   if (humidity != null)
 						   {
-							   builder.addQueryParameter("ambient_temp", Double.toString(humidity.doubleValue()));
+							   builder.addQueryParameter("humidity", Double.toString(humidity.doubleValue()));
 						   }
 
 						   BigDecimal wind = r.get(MEASUREMENTS.WIND_AVERAGE);
@@ -107,6 +107,15 @@ public class WUUploaderThread implements Runnable
 						   if (pressure != null)
 						   {
 							   builder.addQueryParameter("baromin", Double.toString(pressure.doubleValue() * 0.02953));
+						   }
+
+						   if (ambientTemp != null && humidity != null)
+						   {
+							   double temp = ambientTemp.doubleValue();
+							   double hum = humidity.doubleValue();
+							   double dewPoint = (temp - (14.55 + 0.114 * temp) * (1 - (0.01 * hum)) - Math.pow(((2.5 + 0.007 * temp) * (1 - (0.01 * hum))), 3) - (15.9 + 0.117 * temp) * Math.pow((1 - (0.01 * hum)), 14));
+
+							   builder.addQueryParameter("dewptf", Double.toString(dewPoint));
 						   }
 
 						   HttpUrl builtUrl = builder.build();
