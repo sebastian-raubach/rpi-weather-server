@@ -13,14 +13,12 @@ import uk.co.raubach.weatherstation.server.database.codegen.tables.records.Measu
 import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.*;
 import java.sql.*;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
@@ -36,11 +34,22 @@ public class DataResource extends ServerResource
 
 	private String uuid;
 
+	private BigDecimal windOffset;
+
 	@Override
 	protected void doInit()
 		throws ResourceException
 	{
 		super.doInit();
+
+		try
+		{
+			this.windOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.direction.offset")));
+		}
+		catch (Exception e)
+		{
+			this.windOffset = BigDecimal.valueOf(0.0d);
+		}
 
 		try
 		{
@@ -89,12 +98,60 @@ public class DataResource extends ServerResource
 			if (this.end != null)
 				step.where(MEASUREMENTS.CREATED.le(this.end));
 
-			return step.fetchInto(Measurements.class);
+			List<Measurements> result = step.fetchInto(Measurements.class);
+
+			this.adjustWind(result);
+
+			return result;
 		}
 		catch (SQLException e)
 		{
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 		}
+	}
+
+	private void adjustWind(List<Measurements> result)
+	{
+		if (this.windOffset != null && this.windOffset.doubleValue() != 0)
+		{
+			// Adjust wind direction
+			BigDecimal fullCircle = BigDecimal.valueOf(360);
+			result.stream()
+				  .filter(r -> r.getWindAverage() != null)
+				  .forEach(r -> {
+					  BigDecimal wind = r.getWindAverage();
+
+					  wind = wind.subtract(this.windOffset);
+					  if (wind.doubleValue() < 0)
+					  {
+						  wind = wind.add(fullCircle);
+					  }
+
+					  r.setWindAverage(wind);
+				  });
+		}
+	}
+
+	private MeasurementsRecord adjustWind(MeasurementsRecord record)
+	{
+		if (this.windOffset != null && this.windOffset.doubleValue() != 0)
+		{
+			// Adjust wind direction
+			BigDecimal fullCircle = BigDecimal.valueOf(360);
+			BigDecimal wind = record.get(MEASUREMENTS.WIND_AVERAGE);
+
+			if (wind != null)
+			{
+				wind = wind.subtract(this.windOffset);
+				if (wind.doubleValue() < 0)
+				{
+					wind = wind.add(fullCircle);
+				}
+				record.set(MEASUREMENTS.WIND_AVERAGE, wind);
+			}
+		}
+
+		return record;
 	}
 
 	@Get("txt")
@@ -105,7 +162,7 @@ public class DataResource extends ServerResource
 		{
 			Path result = Files.createTempFile("rpi-weather", "txt");
 
-			SelectWhereStep<?> step = context.selectFrom(MEASUREMENTS);
+			SelectWhereStep<MeasurementsRecord> step = context.selectFrom(MEASUREMENTS);
 
 			if (this.start != null)
 				step.where(MEASUREMENTS.CREATED.ge(this.start));
@@ -113,6 +170,7 @@ public class DataResource extends ServerResource
 				step.where(MEASUREMENTS.CREATED.le(this.end));
 
 			List<String> data = step.fetchStream()
+									.map(this::adjustWind)
 									.map(m -> MEASUREMENTS.fieldStream().map(f -> {
 										Object o = m.get(f);
 										if (o != null)
@@ -156,19 +214,19 @@ public class DataResource extends ServerResource
 				Arrays.stream(measurements)
 					  .filter(m -> m.getCreated() != null)
 					  .map(m -> {
-					  	MeasurementsRecord record = context.newRecord(MEASUREMENTS);
-					  	record.setAmbientTemp(m.getAmbientTemp());
-					  	record.setGroundTemp(m.getGroundTemp());
-					  	record.setPressure(m.getPressure());
-					  	record.setHumidity(m.getHumidity());
-					  	record.setWindAverage(m.getWindAverage());
-					  	record.setWindSpeed(m.getWindSpeed());
-					  	record.setWindGust(m.getWindGust());
-					  	record.setRainfall(m.getRainfall());
-					  	record.setPiTemp(m.getPiTemp());
-					  	record.setUploadedWu(false);
-					  	record.setCreated(getDate(m.getCreated()));
-					  	return record;
+						  MeasurementsRecord record = context.newRecord(MEASUREMENTS);
+						  record.setAmbientTemp(m.getAmbientTemp());
+						  record.setGroundTemp(m.getGroundTemp());
+						  record.setPressure(m.getPressure());
+						  record.setHumidity(m.getHumidity());
+						  record.setWindAverage(m.getWindAverage());
+						  record.setWindSpeed(m.getWindSpeed());
+						  record.setWindGust(m.getWindGust());
+						  record.setRainfall(m.getRainfall());
+						  record.setPiTemp(m.getPiTemp());
+						  record.setUploadedWu(false);
+						  record.setCreated(getDate(m.getCreated()));
+						  return record;
 					  })
 					  .forEach(UpdatableRecordImpl::store);
 			}
