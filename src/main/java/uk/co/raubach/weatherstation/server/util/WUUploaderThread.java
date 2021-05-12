@@ -2,6 +2,7 @@ package uk.co.raubach.weatherstation.server.util;
 
 import okhttp3.*;
 import org.jooq.*;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.server.database.Database;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
@@ -53,11 +55,17 @@ public class WUUploaderThread implements Runnable
 		{
 			Measurements m = MEASUREMENTS.as("m");
 
-			Field<BigDecimal> lastSixty = DSL.select(DSL.sum(MEASUREMENTS.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).between(0, 60)).asField("last_sixty");
-			Field<BigDecimal> sinceMidnight = DSL.select(DSL.sum(MEASUREMENTS.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, DSL.timestamp(DSL.date(MEASUREMENTS.CREATED)), m.CREATED).gt(0)).and(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).le(0)).asField("since_midnight");
-			context.select(MEASUREMENTS.fields())
-				   .select(lastSixty)
+			Field<BigDecimal> lastSixty = DSL.select(DSL.sum(m.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).between(0, 60)).asField("last_sixty");
+			Field<BigDecimal> sinceMidnight = DSL.select(DSL.sum(m.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, DSL.timestamp(DSL.date(MEASUREMENTS.CREATED)), m.CREATED).gt(0)).and(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).le(0)).asField("since_midnight");
+
+			List<Field<?>> fields = new ArrayList<>();
+			fields.addAll(Arrays.asList(MEASUREMENTS.fields()));
+			fields.add(lastSixty);
+			fields.add(sinceMidnight);
+			SelectConditionStep<?> step = context.select(fields)
 				   .from(MEASUREMENTS)
+				   .where(MEASUREMENTS.UPLOADED_WU.eq(false));
+			step.stream()
 				   .forEach(r -> {
 					   try
 					   {
@@ -155,12 +163,14 @@ public class WUUploaderThread implements Runnable
 					   }
 					   catch (Exception e)
 					   {
+						   Logger.getLogger("").severe(e.getMessage());
 						   e.printStackTrace();
 					   }
 				   });
 		}
 		catch (SQLException e)
 		{
+			Logger.getLogger("").severe(e.getMessage());
 			e.printStackTrace();
 		}
 	}
