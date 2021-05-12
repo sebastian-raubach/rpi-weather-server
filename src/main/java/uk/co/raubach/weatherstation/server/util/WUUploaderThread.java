@@ -1,9 +1,11 @@
 package uk.co.raubach.weatherstation.server.util;
 
 import okhttp3.*;
-import org.jooq.DSLContext;
+import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.server.database.Database;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -49,8 +51,13 @@ public class WUUploaderThread implements Runnable
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
-			context.selectFrom(MEASUREMENTS)
-				   .where(MEASUREMENTS.UPLOADED_WU.eq(false))
+			Measurements m = MEASUREMENTS.as("m");
+
+			Field<BigDecimal> lastSixty = DSL.select(DSL.sum(MEASUREMENTS.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).between(0, 60)).asField("last_sixty");
+			Field<BigDecimal> sinceMidnight = DSL.select(DSL.sum(MEASUREMENTS.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, DSL.timestamp(DSL.date(MEASUREMENTS.CREATED)), m.CREATED).gt(0)).and(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).le(0)).asField("since_midnight");
+			context.select(MEASUREMENTS.fields())
+				   .select(lastSixty)
+				   .from(MEASUREMENTS)
 				   .forEach(r -> {
 					   try
 					   {
@@ -97,10 +104,12 @@ public class WUUploaderThread implements Runnable
 							   builder.addQueryParameter("windgustmph", Double.toString(windGust.doubleValue() * 0.621371));
 						   }
 
-						   BigDecimal rainfall = r.get(MEASUREMENTS.RAINFALL);
-						   if (rainfall != null)
+						   BigDecimal rainfallLastSixty = r.get(lastSixty);
+						   BigDecimal rainfallSinceMidnight = r.get(sinceMidnight);
+						   if (rainfallLastSixty != null && rainfallSinceMidnight != null)
 						   {
-							   builder.addQueryParameter("rainin", Double.toString(rainfall.doubleValue() * 0.0393701));
+							   builder.addQueryParameter("rainin", Double.toString(rainfallLastSixty.doubleValue() * 0.0393701));
+							   builder.addQueryParameter("dailyrainin", Double.toString(rainfallSinceMidnight.doubleValue() * 0.0393701));
 						   }
 
 						   BigDecimal pressure = r.get(MEASUREMENTS.PRESSURE);
@@ -133,8 +142,10 @@ public class WUUploaderThread implements Runnable
 						   {
 							   if (response.isSuccessful())
 							   {
-								   r.setUploadedWu(true);
-								   r.store(MEASUREMENTS.UPLOADED_WU);
+								   context.update(MEASUREMENTS)
+										  .set(MEASUREMENTS.UPLOADED_WU, true)
+										  .where(MEASUREMENTS.ID.eq(r.get(MEASUREMENTS.ID)))
+										  .execute();
 							   }
 							   else
 							   {
@@ -152,5 +163,11 @@ public class WUUploaderThread implements Runnable
 		{
 			e.printStackTrace();
 		}
+	}
+
+	private static Field<Integer> timestampDiff(DatePart part, Field<Timestamp> t1, Field<Timestamp> t2)
+	{
+		return DSL.field("timestampdiff({0}, {1}, {2})",
+			Integer.class, DSL.keyword(part.toSQL()), t1, t2);
 	}
 }
