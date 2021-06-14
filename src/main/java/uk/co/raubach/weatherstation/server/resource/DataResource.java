@@ -35,6 +35,7 @@ public class DataResource extends ServerResource
 	private String uuid;
 
 	private BigDecimal windOffset;
+	private BigDecimal windFactor;
 
 	@Override
 	protected void doInit()
@@ -49,6 +50,15 @@ public class DataResource extends ServerResource
 		catch (Exception e)
 		{
 			this.windOffset = BigDecimal.valueOf(0.0d);
+		}
+
+		try
+		{
+			this.windFactor = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier")));
+		}
+		catch (Exception e)
+		{
+			this.windOffset = BigDecimal.valueOf(1.0d);
 		}
 
 		try
@@ -126,8 +136,15 @@ public class DataResource extends ServerResource
 					  {
 						  wind = wind.add(fullCircle);
 					  }
-
 					  r.setWindAverage(wind);
+
+					  wind = r.getWindSpeed();
+					  wind = wind.multiply(this.windFactor);
+					  r.setWindSpeed(wind);
+
+					  wind = r.getWindGust();
+					  wind = wind.multiply(this.windFactor);
+					  r.setWindGust(wind);
 				  });
 		}
 	}
@@ -148,6 +165,24 @@ public class DataResource extends ServerResource
 					wind = wind.add(fullCircle);
 				}
 				record.set(MEASUREMENTS.WIND_AVERAGE, wind);
+			}
+
+			try
+			{
+				wind = record.get(MEASUREMENTS.WIND_SPEED);
+				wind = wind.multiply(this.windFactor);
+				record.set(MEASUREMENTS.WIND_SPEED, wind);
+			}
+			catch (Exception e) {
+			}
+
+			try
+			{
+				wind = record.get(MEASUREMENTS.WIND_GUST);
+				wind = wind.multiply(this.windFactor);
+				record.set(MEASUREMENTS.WIND_GUST, wind);
+			}
+			catch (Exception e) {
 			}
 		}
 
