@@ -222,6 +222,7 @@ public class DataResource extends ServerResource
 			FileRepresentation representation = new FileRepresentation(result.toFile(), MediaType.TEXT_PLAIN);
 			representation.setSize(result.toFile().length());
 			representation.setDisposition(new Disposition(Disposition.TYPE_ATTACHMENT));
+			representation.setAutoDeleting(true);
 			return representation;
 		}
 		catch (SQLException | IOException e)

@@ -71,7 +71,7 @@ public class DailyStatsResource extends ServerResource
 
 			List<ViewStatsDaily> stats = step.fetchInto(ViewStatsDaily.class);
 
-			Map<String, DailyStats> tempMap = new HashMap<>();
+			Map<String, DailyStats> tempMap = new TreeMap<>();
 
 			stats.forEach(s -> {
 				DailyStats existing = tempMap.get(s.getDate());
