@@ -1,19 +1,17 @@
 package uk.co.raubach.weatherstation.server.resource;
 
-import org.jooq.*;
-import org.jooq.tools.StringUtils;
+import org.jooq.DSLContext;
 import org.restlet.data.Status;
 import org.restlet.resource.*;
 import uk.co.raubach.weatherstation.resource.DailyStats;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.ViewStatsDaily;
+import uk.co.raubach.weatherstation.server.database.codegen.routines.StatsDaily;
+import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
 import java.sql.*;
 import java.text.*;
 import java.util.Date;
 import java.util.*;
-
-import static uk.co.raubach.weatherstation.server.database.codegen.tables.ViewStatsDaily.*;
 
 public class DailyStatsResource extends ServerResource
 {
@@ -24,6 +22,8 @@ public class DailyStatsResource extends ServerResource
 
 	private String start;
 	private String end;
+
+	private double windFactor;
 
 	@Override
 	protected void doInit()
@@ -48,6 +48,15 @@ public class DailyStatsResource extends ServerResource
 		catch (Exception e)
 		{
 		}
+
+		try
+		{
+			this.windFactor = Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier"));
+		}
+		catch (Exception e)
+		{
+			this.windFactor = 1d;
+		}
 	}
 
 	private synchronized Date getDate(String text)
@@ -62,54 +71,56 @@ public class DailyStatsResource extends ServerResource
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
-			SelectWhereStep<?> step = context.selectFrom(VIEW_STATS_DAILY);
-
-			if (!StringUtils.isEmpty(this.start))
-				step.where(VIEW_STATS_DAILY.DATE.ge(this.start));
-			if (!StringUtils.isEmpty(this.end))
-				step.where(VIEW_STATS_DAILY.DATE.le(this.end));
-
-			List<ViewStatsDaily> stats = step.fetchInto(ViewStatsDaily.class);
+			StatsDaily statsDaily = new StatsDaily();
+			statsDaily.setStartdate(new java.sql.Date(getDate(this.start).getTime()));
+			statsDaily.setStartdate(new java.sql.Date(getDate(this.end).getTime()));
+			statsDaily.setWindfactor(this.windFactor);
+			statsDaily.execute(context.configuration());
 
 			Map<String, DailyStats> tempMap = new TreeMap<>();
 
-			stats.forEach(s -> {
-				DailyStats existing = tempMap.get(s.getDate());
+			statsDaily.getResults()
+					  .get(0)
+					  .forEach(r -> {
+						  String date = r.get("date", String.class);
+						  String agrType = r.get("agrType", String.class);
 
-				if (existing == null)
-				{
-					existing = new DailyStats();
-					try
-					{
-						existing.setDate(getDate(s.getDate()));
-					}
-					catch (Exception e)
-					{
-					}
-				}
+						  DailyStats existing = tempMap.get(date);
 
-				switch (s.getAgrtype())
-				{
-					case "avg":
-						existing.setAvg(new DailyStats.TypeStats(s));
-						break;
-					case "min":
-						existing.setMin(new DailyStats.TypeStats(s));
-						break;
-					case "max":
-						existing.setMax(new DailyStats.TypeStats(s));
-						break;
-					case "stdv":
-						existing.setStdv(new DailyStats.TypeStats(s));
-						break;
-				}
+						  if (existing == null)
+						  {
+							  existing = new DailyStats();
+							  try
+							  {
+								  existing.setDate(getDate(date));
+							  }
+							  catch (Exception e)
+							  {
+							  }
+						  }
 
-				tempMap.put(s.getDate(), existing);
-			});
+						  switch (agrType)
+						  {
+							  case "avg":
+								  existing.setAvg(new DailyStats.TypeStats(r));
+								  break;
+							  case "min":
+								  existing.setMin(new DailyStats.TypeStats(r));
+								  break;
+							  case "max":
+								  existing.setMax(new DailyStats.TypeStats(r));
+								  break;
+							  case "stdv":
+								  existing.setStdv(new DailyStats.TypeStats(r));
+								  break;
+						  }
+
+						  tempMap.put(date, existing);
+					  });
 
 			return new ArrayList<>(tempMap.values());
 		}
-		catch (SQLException e)
+		catch (SQLException | ParseException e)
 		{
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 		}

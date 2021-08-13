@@ -1,6 +1,6 @@
 package uk.co.raubach.weatherstation.resource;
 
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.ViewStatsDaily;
+import org.jooq.Record;
 
 import java.util.Date;
 
@@ -77,16 +77,16 @@ public class DailyStats
 		{
 		}
 
-		public TypeStats(ViewStatsDaily stats)
+		public TypeStats(Record r)
 		{
-			this.ambientTemp = stats.getAmbientTemp();
-			this.groundTemp = stats.getGroundTemp();
-			this.pressure = stats.getPressure();
-			this.humidity = stats.getHumidity();
-			this.windAverage = stats.getWindAverage();
-			this.windSpeed = stats.getWindSpeed();
-			this.windGust = stats.getWindGust();
-			this.rainfall = stats.getRainfall();
+			this.ambientTemp = r.get("ambient_temp", Double.class);
+			this.groundTemp = r.get("ground_temp", Double.class);
+			this.pressure = r.get("pressure", Double.class);
+			this.humidity = r.get("humidity", Double.class);
+			this.windAverage = r.get("wind_average", Double.class);
+			this.windSpeed = r.get("wind_speed", Double.class);
+			this.windGust = r.get("wind_gust", Double.class);
+			this.rainfall = r.get("rainfall", Double.class);
 		}
 
 		public Double getAmbientTemp()

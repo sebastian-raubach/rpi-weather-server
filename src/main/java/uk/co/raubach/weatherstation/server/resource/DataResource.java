@@ -58,7 +58,7 @@ public class DataResource extends ServerResource
 		}
 		catch (Exception e)
 		{
-			this.windOffset = BigDecimal.valueOf(1.0d);
+			this.windFactor = BigDecimal.valueOf(1.0d);
 		}
 
 		try
