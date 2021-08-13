@@ -4,7 +4,7 @@
 package uk.co.raubach.weatherstation.server.database.codegen.routines;
 
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.annotation.Generated;
 
@@ -28,17 +28,17 @@ import uk.co.raubach.weatherstation.server.database.codegen.WeatherstationDb;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class StatsDaily extends AbstractRoutine<java.lang.Void> {
 
-    private static final long serialVersionUID = 724232773;
+    private static final long serialVersionUID = 156952923;
 
     /**
      * The parameter <code>weatherstation_db.stats_daily.startDate</code>.
      */
-    public static final Parameter<Date> STARTDATE = Internal.createParameter("startDate", org.jooq.impl.SQLDataType.DATE, false, false);
+    public static final Parameter<Timestamp> STARTDATE = Internal.createParameter("startDate", org.jooq.impl.SQLDataType.TIMESTAMP, false, false);
 
     /**
      * The parameter <code>weatherstation_db.stats_daily.endDate</code>.
      */
-    public static final Parameter<Date> ENDDATE = Internal.createParameter("endDate", org.jooq.impl.SQLDataType.DATE, false, false);
+    public static final Parameter<Timestamp> ENDDATE = Internal.createParameter("endDate", org.jooq.impl.SQLDataType.TIMESTAMP, false, false);
 
     /**
      * The parameter <code>weatherstation_db.stats_daily.windFactor</code>.
@@ -59,14 +59,14 @@ public class StatsDaily extends AbstractRoutine<java.lang.Void> {
     /**
      * Set the <code>startDate</code> parameter IN value to the routine
      */
-    public void setStartdate(Date value) {
+    public void setStartdate(Timestamp value) {
         setValue(STARTDATE, value);
     }
 
     /**
      * Set the <code>endDate</code> parameter IN value to the routine
      */
-    public void setEnddate(Date value) {
+    public void setEnddate(Timestamp value) {
         setValue(ENDDATE, value);
     }
 

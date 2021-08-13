@@ -10,6 +10,7 @@ import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
 import java.sql.*;
 import java.text.*;
+import java.time.*;
 import java.util.Date;
 import java.util.*;
 
@@ -20,8 +21,8 @@ public class DailyStatsResource extends ServerResource
 	public static final String PARAM_START = "start";
 	public static final String PARAM_END   = "end";
 
-	private String start;
-	private String end;
+	private Timestamp start;
+	private Timestamp end;
 
 	private double windFactor;
 
@@ -33,20 +34,20 @@ public class DailyStatsResource extends ServerResource
 
 		try
 		{
-			getDate(getQueryValue(PARAM_START));
-			this.start = getQueryValue(PARAM_START);
+			this.start = getTimestamp(getQueryValue(PARAM_START));
 		}
 		catch (Exception e)
 		{
+			this.start = new Timestamp(System.currentTimeMillis());
 		}
 
 		try
 		{
-			getDate(getQueryValue(PARAM_END));
-			this.end = getQueryValue(PARAM_END);
+			this.end = getTimestamp(getQueryValue(PARAM_END));
 		}
 		catch (Exception e)
 		{
+			this.end = new Timestamp(System.currentTimeMillis());
 		}
 
 		try
@@ -59,10 +60,25 @@ public class DailyStatsResource extends ServerResource
 		}
 	}
 
-	private synchronized Date getDate(String text)
-		throws ParseException
+	private synchronized Timestamp getTimestamp(String text)
 	{
-		return SDF.parse(text);
+		OffsetDateTime odt = OffsetDateTime.parse(text);
+		Instant i = Instant.from(odt);
+		Date d = Date.from(i);
+
+		return new Timestamp(d.getTime());
+	}
+
+	private synchronized Date getDate(String text)
+	{
+		try
+		{
+			return SDF.parse(text);
+		}
+		catch (ParseException e)
+		{
+			return null;
+		}
 	}
 
 	@Get
@@ -72,8 +88,8 @@ public class DailyStatsResource extends ServerResource
 			 DSLContext context = Database.getContext(conn))
 		{
 			StatsDaily statsDaily = new StatsDaily();
-			statsDaily.setStartdate(new java.sql.Date(getDate(this.start).getTime()));
-			statsDaily.setStartdate(new java.sql.Date(getDate(this.end).getTime()));
+			statsDaily.setStartdate(this.start);
+			statsDaily.setEnddate(this.end);
 			statsDaily.setWindfactor(this.windFactor);
 			statsDaily.execute(context.configuration());
 
@@ -120,7 +136,7 @@ public class DailyStatsResource extends ServerResource
 
 			return new ArrayList<>(tempMap.values());
 		}
-		catch (SQLException | ParseException e)
+		catch (SQLException e)
 		{
 			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 		}
