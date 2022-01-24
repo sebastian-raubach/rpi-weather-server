@@ -70,6 +70,7 @@ public class WeatherStation extends Application
 
 		attachToRouter(router, "/data", DataResource.class);
 		attachToRouter(router, "/stats/daily", DailyStatsResource.class);
+		attachToRouter(router, "/stats/years", YearResource.class);
 
 		return corsFilter;
 	}
