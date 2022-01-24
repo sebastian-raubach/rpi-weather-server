@@ -1,6 +1,6 @@
 package uk.co.raubach.weatherstation.server.resource;
 
-import org.jooq.DSLContext;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.restlet.data.Status;
 import org.restlet.resource.*;
@@ -19,7 +19,8 @@ public class YearResource extends ServerResource
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
-			return context.selectDistinct(DSL.year(MEASUREMENTS.CREATED)).from(MEASUREMENTS).orderBy(MEASUREMENTS.CREATED).fetchInto(Integer.class);
+			Field<Integer> year = DSL.year(MEASUREMENTS.CREATED).as("year");
+			return context.selectDistinct(year).from(MEASUREMENTS).orderBy(year).fetchInto(Integer.class);
 		}
 		catch (SQLException e)
 		{
