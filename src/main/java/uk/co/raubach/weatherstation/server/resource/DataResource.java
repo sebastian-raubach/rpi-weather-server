@@ -36,6 +36,7 @@ public class DataResource extends ServerResource
 
 	private BigDecimal windOffset;
 	private BigDecimal windFactor;
+	private BigDecimal tempOffset;
 
 	@Override
 	protected void doInit()
@@ -59,6 +60,15 @@ public class DataResource extends ServerResource
 		catch (Exception e)
 		{
 			this.windFactor = BigDecimal.valueOf(1.0d);
+		}
+
+		try
+		{
+			this.tempOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("temperature.offset")));
+		}
+		catch (Exception e)
+		{
+			this.tempOffset = BigDecimal.valueOf(0d);
 		}
 
 		try
@@ -111,6 +121,7 @@ public class DataResource extends ServerResource
 			List<Measurements> result = step.fetchInto(Measurements.class);
 
 			this.adjustWind(result);
+			this.adjustTemp(result);
 
 			return result;
 		}
@@ -120,32 +131,90 @@ public class DataResource extends ServerResource
 		}
 	}
 
+	private MeasurementsRecord adjustTemp(MeasurementsRecord record)
+	{
+		if (this.tempOffset != null && this.tempOffset.doubleValue() != 0)
+		{
+			// Adjust wind direction
+			BigDecimal ambientTemp = record.get(MEASUREMENTS.AMBIENT_TEMP);
+			BigDecimal groundTemp = record.get(MEASUREMENTS.GROUND_TEMP);
+
+			try
+			{
+				if (ambientTemp != null)
+					ambientTemp = ambientTemp.add(this.tempOffset);
+				if (groundTemp != null)
+					groundTemp = groundTemp.add(this.tempOffset);
+
+				record.set(MEASUREMENTS.AMBIENT_TEMP, ambientTemp);
+				record.set(MEASUREMENTS.GROUND_TEMP, groundTemp);
+			}
+			catch (Exception e)
+			{
+			}
+		}
+
+		return record;
+	}
+
+	private void adjustTemp(List<Measurements> result)
+	{
+		if (this.tempOffset != null && this.tempOffset.doubleValue() != 0)
+		{
+			result.forEach(r -> {
+				BigDecimal ambientTemp = r.getAmbientTemp();
+				BigDecimal groundTemp = r.getGroundTemp();
+
+				if (ambientTemp != null)
+				{
+					ambientTemp = ambientTemp.add(this.tempOffset);
+					r.setAmbientTemp(ambientTemp);
+				}
+
+				if (groundTemp != null)
+				{
+					groundTemp = groundTemp.add(this.tempOffset);
+					r.setGroundTemp(groundTemp);
+				}
+			});
+		}
+	}
+
 	private void adjustWind(List<Measurements> result)
 	{
 		if (this.windOffset != null && this.windOffset.doubleValue() != 0)
 		{
 			// Adjust wind direction
 			BigDecimal fullCircle = BigDecimal.valueOf(360);
-			result.stream()
-				  .filter(r -> r.getWindAverage() != null)
-				  .forEach(r -> {
-					  BigDecimal wind = r.getWindAverage();
+			result.forEach(r -> {
+				BigDecimal wind = r.getWindAverage();
 
-					  wind = wind.subtract(this.windOffset);
-					  if (wind.doubleValue() < 0)
-					  {
-						  wind = wind.add(fullCircle);
-					  }
-					  r.setWindAverage(wind);
+				if (wind != null)
+				{
+					wind = wind.subtract(this.windOffset);
+					if (wind.doubleValue() < 0)
+					{
+						wind = wind.add(fullCircle);
+					}
+					r.setWindAverage(wind);
+				}
 
-					  wind = r.getWindSpeed();
-					  wind = wind.multiply(this.windFactor);
-					  r.setWindSpeed(wind);
+				wind = r.getWindSpeed();
 
-					  wind = r.getWindGust();
-					  wind = wind.multiply(this.windFactor);
-					  r.setWindGust(wind);
-				  });
+				if (wind != null)
+				{
+					wind = wind.multiply(this.windFactor);
+					r.setWindSpeed(wind);
+				}
+
+				wind = r.getWindGust();
+
+				if (wind != null)
+				{
+					wind = wind.multiply(this.windFactor);
+					r.setWindGust(wind);
+				}
+			});
 		}
 	}
 
@@ -173,7 +242,8 @@ public class DataResource extends ServerResource
 				wind = wind.multiply(this.windFactor);
 				record.set(MEASUREMENTS.WIND_SPEED, wind);
 			}
-			catch (Exception e) {
+			catch (Exception e)
+			{
 			}
 
 			try
@@ -182,7 +252,8 @@ public class DataResource extends ServerResource
 				wind = wind.multiply(this.windFactor);
 				record.set(MEASUREMENTS.WIND_GUST, wind);
 			}
-			catch (Exception e) {
+			catch (Exception e)
+			{
 			}
 		}
 
@@ -206,6 +277,7 @@ public class DataResource extends ServerResource
 
 			List<String> data = step.fetchStream()
 									.map(this::adjustWind)
+									.map(this::adjustTemp)
 									.map(m -> MEASUREMENTS.fieldStream().map(f -> {
 										Object o = m.get(f);
 										if (o != null)
