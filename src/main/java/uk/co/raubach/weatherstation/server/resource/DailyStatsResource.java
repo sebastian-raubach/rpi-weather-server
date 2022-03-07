@@ -5,14 +5,16 @@ import org.restlet.data.Status;
 import org.restlet.resource.*;
 import uk.co.raubach.weatherstation.resource.DailyStats;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.routines.StatsDaily;
-import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Aggregated;
 
 import java.sql.*;
 import java.text.*;
 import java.time.*;
 import java.util.Date;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.*;
 
 public class DailyStatsResource extends ServerResource
 {
@@ -23,8 +25,6 @@ public class DailyStatsResource extends ServerResource
 
 	private Timestamp start;
 	private Timestamp end;
-
-	private double windFactor;
 
 	@Override
 	protected void doInit()
@@ -48,15 +48,6 @@ public class DailyStatsResource extends ServerResource
 		catch (Exception e)
 		{
 			this.end = new Timestamp(System.currentTimeMillis());
-		}
-
-		try
-		{
-			this.windFactor = Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier"));
-		}
-		catch (Exception e)
-		{
-			this.windFactor = 1d;
 		}
 	}
 
@@ -87,54 +78,61 @@ public class DailyStatsResource extends ServerResource
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
-			StatsDaily statsDaily = new StatsDaily();
-			statsDaily.setStartdate(this.start);
-			statsDaily.setEnddate(this.end);
-			statsDaily.setWindfactor(this.windFactor);
-			statsDaily.execute(context.configuration());
+			List<Aggregated> statsDaily = context.selectFrom(AGGREGATED)
+												 .where(AGGREGATED.DATE.ge(new java.sql.Date(this.start.getTime())))
+												 .and(AGGREGATED.DATE.le(new java.sql.Date(this.end.getTime())))
+												 .fetchInto(Aggregated.class);
 
-			Map<String, DailyStats> tempMap = new TreeMap<>();
+			return statsDaily.stream()
+							 .map(r -> {
+								 DailyStats result = new DailyStats();
+								 result.setDate(new Date(r.getDate().getTime()));
 
-			statsDaily.getResults()
-					  .get(0)
-					  .forEach(r -> {
-						  String date = r.get("date", String.class);
-						  String agrType = r.get("agrType", String.class);
+								 DailyStats.TypeStats min = new DailyStats.TypeStats();
+								 min.setAmbientTemp(r.getMinAmbientTemp());
+								 min.setGroundTemp(r.getMinGroundTemp());
+								 min.setHumidity(r.getMinHumidity());
+								 min.setPressure(r.getMinPressure());
+								 min.setRainfall(r.getSumRainfall());
+								 min.setWindAverage(r.getMinWindAverage());
+								 min.setWindGust(r.getMinWindGust());
+								 min.setWindSpeed(r.getMinWindSpeed());
+								 DailyStats.TypeStats max = new DailyStats.TypeStats();
+								 max.setAmbientTemp(r.getMaxAmbientTemp());
+								 max.setGroundTemp(r.getMaxGroundTemp());
+								 max.setHumidity(r.getMaxHumidity());
+								 max.setPressure(r.getMaxPressure());
+								 max.setRainfall(r.getSumRainfall());
+								 max.setWindAverage(r.getMaxWindAverage());
+								 max.setWindGust(r.getMaxWindGust());
+								 max.setWindSpeed(r.getMaxWindSpeed());
+								 DailyStats.TypeStats avg = new DailyStats.TypeStats();
+								 avg.setAmbientTemp(r.getAvgAmbientTemp());
+								 avg.setGroundTemp(r.getAvgGroundTemp());
+								 avg.setHumidity(r.getAvgHumidity());
+								 avg.setPressure(r.getAvgPressure());
+								 avg.setRainfall(r.getSumRainfall());
+								 avg.setWindAverage(r.getAvgWindAverage());
+								 avg.setWindGust(r.getAvgWindGust());
+								 avg.setWindSpeed(r.getAvgWindSpeed());
+								 DailyStats.TypeStats std = new DailyStats.TypeStats();
+								 std.setAmbientTemp(r.getStdAmbientTemp());
+								 std.setGroundTemp(r.getStdGroundTemp());
+								 std.setHumidity(r.getStdHumidity());
+								 std.setPressure(r.getStdPressure());
+								 std.setRainfall(r.getSumRainfall());
+								 std.setWindAverage(r.getStdWindAverage());
+								 std.setWindGust(r.getStdWindGust());
+								 std.setWindSpeed(r.getStdWindSpeed());
 
-						  DailyStats existing = tempMap.get(date);
+								 result.setMin(min);
+								 result.setMax(max);
+								 result.setAvg(avg);
+								 result.setStdv(std);
 
-						  if (existing == null)
-						  {
-							  existing = new DailyStats();
-							  try
-							  {
-								  existing.setDate(getDate(date));
-							  }
-							  catch (Exception e)
-							  {
-							  }
-						  }
+								 return result;
+							 }).collect(Collectors.toList());
 
-						  switch (agrType)
-						  {
-							  case "avg":
-								  existing.setAvg(new DailyStats.TypeStats(r));
-								  break;
-							  case "min":
-								  existing.setMin(new DailyStats.TypeStats(r));
-								  break;
-							  case "max":
-								  existing.setMax(new DailyStats.TypeStats(r));
-								  break;
-							  case "stdv":
-								  existing.setStdv(new DailyStats.TypeStats(r));
-								  break;
-						  }
-
-						  tempMap.put(date, existing);
-					  });
-
-			return new ArrayList<>(tempMap.values());
 		}
 		catch (SQLException e)
 		{

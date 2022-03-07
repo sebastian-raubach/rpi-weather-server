@@ -23,6 +23,8 @@ public class ApplicationListener implements ServletContextListener
 
 		backgroundScheduler = Executors.newSingleThreadScheduledExecutor();
 		backgroundScheduler.scheduleAtFixedRate(new WUUploaderThread(), 1, 10, TimeUnit.MINUTES);
+
+		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 1, TimeUnit.DAYS);
 	}
 
 	@Override
