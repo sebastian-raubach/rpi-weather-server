@@ -1,7 +1,7 @@
 package uk.co.raubach.weatherstation.server.util;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebListener;
 import java.util.concurrent.*;
 
 /**

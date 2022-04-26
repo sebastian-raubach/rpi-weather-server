@@ -1,12 +1,14 @@
 package uk.co.raubach.weatherstation.server.resource;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import org.jooq.DSLContext;
-import org.restlet.data.Status;
-import org.restlet.resource.*;
+import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.DailyStats;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Aggregated;
 
+import java.io.IOException;
 import java.sql.*;
 import java.text.*;
 import java.time.*;
@@ -16,43 +18,15 @@ import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.*;
 
-public class DailyStatsResource extends ServerResource
+@Path("stats/daily")
+public class DailyStatsResource extends ContextResource
 {
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 
-	public static final String PARAM_START = "start";
-	public static final String PARAM_END   = "end";
-
-	private Timestamp start;
-	private Timestamp end;
-
-	@Override
-	protected void doInit()
-		throws ResourceException
-	{
-		super.doInit();
-
-		try
-		{
-			this.start = getTimestamp(getQueryValue(PARAM_START));
-		}
-		catch (Exception e)
-		{
-			this.start = new Timestamp(System.currentTimeMillis());
-		}
-
-		try
-		{
-			this.end = getTimestamp(getQueryValue(PARAM_END));
-		}
-		catch (Exception e)
-		{
-			this.end = new Timestamp(System.currentTimeMillis());
-		}
-	}
-
 	private synchronized Timestamp getTimestamp(String text)
 	{
+		if (StringUtils.isEmpty(text))
+			return new Timestamp(System.currentTimeMillis());
 		OffsetDateTime odt = OffsetDateTime.parse(text);
 		Instant i = Instant.from(odt);
 		Date d = Date.from(i);
@@ -72,15 +46,21 @@ public class DailyStatsResource extends ServerResource
 		}
 	}
 
-	@Get
-	public List<DailyStats> getDailyStats()
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<DailyStats> getDailyStats(@QueryParam("start") String startString, @QueryParam("end") String endString)
+		throws IOException, SQLException
 	{
+		Timestamp start = getTimestamp(startString);
+		Timestamp end = getTimestamp(endString);
+
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
 			List<Aggregated> statsDaily = context.selectFrom(AGGREGATED)
-												 .where(AGGREGATED.DATE.ge(new java.sql.Date(this.start.getTime())))
-												 .and(AGGREGATED.DATE.le(new java.sql.Date(this.end.getTime())))
+												 .where(AGGREGATED.DATE.ge(new java.sql.Date(start.getTime())))
+												 .and(AGGREGATED.DATE.le(new java.sql.Date(end.getTime())))
 												 .fetchInto(Aggregated.class);
 
 			return statsDaily.stream()
@@ -133,10 +113,6 @@ public class DailyStatsResource extends ServerResource
 								 return result;
 							 }).collect(Collectors.toList());
 
-		}
-		catch (SQLException e)
-		{
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 		}
 	}
 }

@@ -1,11 +1,10 @@
 package uk.co.raubach.weatherstation.server.resource;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import org.jooq.*;
 import org.jooq.impl.UpdatableRecordImpl;
-import org.restlet.data.Status;
-import org.restlet.data.*;
-import org.restlet.representation.FileRepresentation;
-import org.restlet.resource.*;
+import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.MeasurementPojo;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
@@ -14,90 +13,55 @@ import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.*;
 import java.sql.*;
 import java.time.*;
 import java.util.Date;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
 
-public class DataResource extends ServerResource
+@jakarta.ws.rs.Path("data")
+public class DataResource extends ContextResource
 {
-	public static final String PARAM_UUID  = "uuid";
-	public static final String PARAM_START = "start";
-	public static final String PARAM_END   = "end";
+	private static BigDecimal windOffset;
+	private static BigDecimal windFactor;
+	private static BigDecimal tempOffset;
 
-	private Timestamp start;
-	private Timestamp end;
-
-	private String uuid;
-
-	private BigDecimal windOffset;
-	private BigDecimal windFactor;
-	private BigDecimal tempOffset;
-
-	@Override
-	protected void doInit()
-		throws ResourceException
+	static
 	{
-		super.doInit();
-
 		try
 		{
-			this.windOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.direction.offset")));
+			windOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.direction.offset")));
 		}
 		catch (Exception e)
 		{
-			this.windOffset = BigDecimal.valueOf(0.0d);
-		}
-
-		try
-		{
-			this.windFactor = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier")));
-		}
-		catch (Exception e)
-		{
-			this.windFactor = BigDecimal.valueOf(1.0d);
+			windOffset = BigDecimal.valueOf(0.0d);
 		}
 
 		try
 		{
-			this.tempOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("temperature.offset")));
+			windFactor = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier")));
 		}
 		catch (Exception e)
 		{
-			this.tempOffset = BigDecimal.valueOf(0d);
+			windFactor = BigDecimal.valueOf(1.0d);
 		}
 
 		try
 		{
-			this.uuid = getQueryValue(PARAM_UUID);
+			tempOffset = BigDecimal.valueOf(Double.parseDouble(PropertyWatcher.get("temperature.offset")));
 		}
 		catch (Exception e)
 		{
-		}
-
-		try
-		{
-			this.start = getDate(getQueryValue(PARAM_START));
-		}
-		catch (Exception e)
-		{
-		}
-
-		try
-		{
-			this.end = getDate(getQueryValue(PARAM_END));
-		}
-		catch (Exception e)
-		{
+			tempOffset = BigDecimal.valueOf(0d);
 		}
 	}
 
 	private synchronized Timestamp getDate(String text)
 	{
+		if (StringUtils.isEmpty(text))
+			return null;
+
 		OffsetDateTime odt = OffsetDateTime.parse(text);
 		Instant i = Instant.from(odt);
 		Date d = Date.from(i);
@@ -105,18 +69,24 @@ public class DataResource extends ServerResource
 		return new Timestamp(d.getTime());
 	}
 
-	@Get("json")
-	public List<Measurements> getDataJson()
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Measurements> getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString, @QueryParam("uuid") String uuid)
+		throws IOException, SQLException
 	{
+		Timestamp start = getDate(startString);
+		Timestamp end = getDate(endString);
+
 		try (Connection conn = Database.getDirectConnection();
 			 DSLContext context = Database.getContext(conn))
 		{
 			SelectWhereStep<?> step = context.selectFrom(MEASUREMENTS);
 
-			if (this.start != null)
-				step.where(MEASUREMENTS.CREATED.ge(this.start));
-			if (this.end != null)
-				step.where(MEASUREMENTS.CREATED.le(this.end));
+			if (start != null)
+				step.where(MEASUREMENTS.CREATED.ge(start));
+			if (end != null)
+				step.where(MEASUREMENTS.CREATED.le(end));
 
 			List<Measurements> result = step.fetchInto(Measurements.class);
 
@@ -125,15 +95,11 @@ public class DataResource extends ServerResource
 
 			return result;
 		}
-		catch (SQLException e)
-		{
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
-		}
 	}
 
 	private MeasurementsRecord adjustTemp(MeasurementsRecord record)
 	{
-		if (this.tempOffset != null && this.tempOffset.doubleValue() != 0)
+		if (tempOffset != null && tempOffset.doubleValue() != 0)
 		{
 			// Adjust wind direction
 			BigDecimal ambientTemp = record.get(MEASUREMENTS.AMBIENT_TEMP);
@@ -142,9 +108,9 @@ public class DataResource extends ServerResource
 			try
 			{
 				if (ambientTemp != null)
-					ambientTemp = ambientTemp.add(this.tempOffset);
+					ambientTemp = ambientTemp.add(tempOffset);
 				if (groundTemp != null)
-					groundTemp = groundTemp.add(this.tempOffset);
+					groundTemp = groundTemp.add(tempOffset);
 
 				record.set(MEASUREMENTS.AMBIENT_TEMP, ambientTemp);
 				record.set(MEASUREMENTS.GROUND_TEMP, groundTemp);
@@ -159,7 +125,7 @@ public class DataResource extends ServerResource
 
 	private void adjustTemp(List<Measurements> result)
 	{
-		if (this.tempOffset != null && this.tempOffset.doubleValue() != 0)
+		if (tempOffset != null && tempOffset.doubleValue() != 0)
 		{
 			result.forEach(r -> {
 				BigDecimal ambientTemp = r.getAmbientTemp();
@@ -167,13 +133,13 @@ public class DataResource extends ServerResource
 
 				if (ambientTemp != null)
 				{
-					ambientTemp = ambientTemp.add(this.tempOffset);
+					ambientTemp = ambientTemp.add(tempOffset);
 					r.setAmbientTemp(ambientTemp);
 				}
 
 				if (groundTemp != null)
 				{
-					groundTemp = groundTemp.add(this.tempOffset);
+					groundTemp = groundTemp.add(tempOffset);
 					r.setGroundTemp(groundTemp);
 				}
 			});
@@ -182,7 +148,7 @@ public class DataResource extends ServerResource
 
 	private void adjustWind(List<Measurements> result)
 	{
-		if (this.windOffset != null && this.windOffset.doubleValue() != 0)
+		if (windOffset != null && windOffset.doubleValue() != 0)
 		{
 			// Adjust wind direction
 			BigDecimal fullCircle = BigDecimal.valueOf(360);
@@ -191,7 +157,7 @@ public class DataResource extends ServerResource
 
 				if (wind != null)
 				{
-					wind = wind.subtract(this.windOffset);
+					wind = wind.subtract(windOffset);
 					if (wind.doubleValue() < 0)
 					{
 						wind = wind.add(fullCircle);
@@ -203,7 +169,7 @@ public class DataResource extends ServerResource
 
 				if (wind != null)
 				{
-					wind = wind.multiply(this.windFactor);
+					wind = wind.multiply(windFactor);
 					r.setWindSpeed(wind);
 				}
 
@@ -211,7 +177,7 @@ public class DataResource extends ServerResource
 
 				if (wind != null)
 				{
-					wind = wind.multiply(this.windFactor);
+					wind = wind.multiply(windFactor);
 					r.setWindGust(wind);
 				}
 			});
@@ -220,7 +186,7 @@ public class DataResource extends ServerResource
 
 	private MeasurementsRecord adjustWind(MeasurementsRecord record)
 	{
-		if (this.windOffset != null && this.windOffset.doubleValue() != 0)
+		if (windOffset != null && windOffset.doubleValue() != 0)
 		{
 			// Adjust wind direction
 			BigDecimal fullCircle = BigDecimal.valueOf(360);
@@ -228,7 +194,7 @@ public class DataResource extends ServerResource
 
 			if (wind != null)
 			{
-				wind = wind.subtract(this.windOffset);
+				wind = wind.subtract(windOffset);
 				if (wind.doubleValue() < 0)
 				{
 					wind = wind.add(fullCircle);
@@ -239,7 +205,7 @@ public class DataResource extends ServerResource
 			try
 			{
 				wind = record.get(MEASUREMENTS.WIND_SPEED);
-				wind = wind.multiply(this.windFactor);
+				wind = wind.multiply(windFactor);
 				record.set(MEASUREMENTS.WIND_SPEED, wind);
 			}
 			catch (Exception e)
@@ -249,7 +215,7 @@ public class DataResource extends ServerResource
 			try
 			{
 				wind = record.get(MEASUREMENTS.WIND_GUST);
-				wind = wind.multiply(this.windFactor);
+				wind = wind.multiply(windFactor);
 				record.set(MEASUREMENTS.WIND_GUST, wind);
 			}
 			catch (Exception e)
@@ -260,59 +226,60 @@ public class DataResource extends ServerResource
 		return record;
 	}
 
-	@Get("txt")
-	public FileRepresentation getDataPlain()
+//	@Get("txt")
+//	public FileRepresentation getDataPlain()
+//	{
+//		try (Connection conn = Database.getDirectConnection();
+//			 DSLContext context = Database.getContext(conn))
+//		{
+//			Path result = Files.createTempFile("rpi-weather", "txt");
+//
+//			SelectWhereStep<MeasurementsRecord> step = context.selectFrom(MEASUREMENTS);
+//
+//			if (start != null)
+//				step.where(MEASUREMENTS.CREATED.ge(start));
+//			if (end != null)
+//				step.where(MEASUREMENTS.CREATED.le(end));
+//
+//			List<String> data = step.fetchStream()
+//									.map(this::adjustWind)
+//									.map(this::adjustTemp)
+//									.map(m -> MEASUREMENTS.fieldStream().map(f -> {
+//										Object o = m.get(f);
+//										if (o != null)
+//											return o.toString();
+//										else
+//											return "";
+//									}).collect(Collectors.joining("\t")))
+//									.collect(Collectors.toList());
+//
+//			data.add(0, MEASUREMENTS.fieldStream().map(Field::getName).collect(Collectors.joining("\t")));
+//
+//			Files.write(result, data);
+//
+//			FileRepresentation representation = new FileRepresentation(result.toFile(), MediaType.TEXT_PLAIN);
+//			representation.setSize(result.toFile().length());
+//			representation.setDisposition(new Disposition(Disposition.TYPE_ATTACHMENT));
+//			representation.setAutoDeleting(true);
+//			return representation;
+//		}
+//	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void postData(MeasurementPojo[] measurements, @QueryParam("uuid") String uuid)
+		throws IOException, SQLException
 	{
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		if (!Objects.equals(uuid, PropertyWatcher.get("client.uuid")))
 		{
-			Path result = Files.createTempFile("rpi-weather", "txt");
-
-			SelectWhereStep<MeasurementsRecord> step = context.selectFrom(MEASUREMENTS);
-
-			if (this.start != null)
-				step.where(MEASUREMENTS.CREATED.ge(this.start));
-			if (this.end != null)
-				step.where(MEASUREMENTS.CREATED.le(this.end));
-
-			List<String> data = step.fetchStream()
-									.map(this::adjustWind)
-									.map(this::adjustTemp)
-									.map(m -> MEASUREMENTS.fieldStream().map(f -> {
-										Object o = m.get(f);
-										if (o != null)
-											return o.toString();
-										else
-											return "";
-									}).collect(Collectors.joining("\t")))
-									.collect(Collectors.toList());
-
-			data.add(0, MEASUREMENTS.fieldStream().map(Field::getName).collect(Collectors.joining("\t")));
-
-			Files.write(result, data);
-
-			FileRepresentation representation = new FileRepresentation(result.toFile(), MediaType.TEXT_PLAIN);
-			representation.setSize(result.toFile().length());
-			representation.setDisposition(new Disposition(Disposition.TYPE_ATTACHMENT));
-			representation.setAutoDeleting(true);
-			return representation;
-		}
-		catch (SQLException | IOException e)
-		{
-			throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
-		}
-	}
-
-	@Post
-	public void postData(MeasurementPojo[] measurements)
-	{
-		if (!Objects.equals(this.uuid, PropertyWatcher.get("client.uuid")))
-		{
-			throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED);
+			resp.sendError(Response.Status.UNAUTHORIZED.getStatusCode());
+			return;
 		}
 		else if (measurements == null)
 		{
-			throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST);
+			resp.sendError(Response.Status.BAD_REQUEST.getStatusCode());
+			return;
 		}
 		else
 		{
@@ -337,10 +304,6 @@ public class DataResource extends ServerResource
 						  return record;
 					  })
 					  .forEach(UpdatableRecordImpl::store);
-			}
-			catch (SQLException e)
-			{
-				throw new ResourceException(Status.SERVER_ERROR_INTERNAL);
 			}
 		}
 	}
