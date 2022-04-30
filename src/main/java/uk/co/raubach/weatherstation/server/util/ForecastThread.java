@@ -6,6 +6,7 @@ import uk.co.raubach.weatherstation.resource.OpenWeathermapForecast;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 
 import java.io.IOException;
+import java.math.*;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Logger;
@@ -53,8 +54,8 @@ public class ForecastThread implements Runnable
 						m.setRainfall(h.precipitation());
 						m.setPressure(h.pressure());
 						m.setHumidity(h.humidity());
-						m.setWindGust(h.windGust());
-						m.setWindSpeed(h.windSpeed());
+						m.setWindGust(h.windGust() == null ? null : h.windGust().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP));
+						m.setWindSpeed(h.windSpeed() == null ? null : h.windSpeed().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP));
 						m.setCreated(new Timestamp((h.dt()/* + data.timezoneOffset()*/) * 1000));
 						measurements.add(m);
 					});
@@ -65,8 +66,8 @@ public class ForecastThread implements Runnable
 						m.setRainfall(h.precipitation());
 						m.setPressure(h.pressure());
 						m.setHumidity(h.humidity());
-						m.setWindGust(h.windGust());
-						m.setWindSpeed(h.windSpeed());
+						m.setWindGust(h.windGust() == null ? null : h.windGust().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP));
+						m.setWindSpeed(h.windSpeed() == null ? null : h.windSpeed().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP));
 						m.setCreated(new Timestamp((h.dt()/* + data.timezoneOffset()*/) * 1000));
 						measurements.add(m);
 					});
