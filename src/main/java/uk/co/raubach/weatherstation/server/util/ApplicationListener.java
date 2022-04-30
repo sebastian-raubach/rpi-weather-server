@@ -2,6 +2,8 @@ package uk.co.raubach.weatherstation.server.util;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebListener;
+import org.jooq.tools.StringUtils;
+
 import java.util.concurrent.*;
 
 /**
@@ -23,8 +25,10 @@ public class ApplicationListener implements ServletContextListener
 
 		backgroundScheduler = Executors.newSingleThreadScheduledExecutor();
 		backgroundScheduler.scheduleAtFixedRate(new WUUploaderThread(), 1, 10, TimeUnit.MINUTES);
-
 		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 1, TimeUnit.DAYS);
+
+		if (!StringUtils.isEmpty(PropertyWatcher.get("latitude")) && !StringUtils.isEmpty(PropertyWatcher.get("longitude")) && !StringUtils.isEmpty("openweathermap.key"))
+			backgroundScheduler.scheduleAtFixedRate(new ForecastThread(), 0, 1, TimeUnit.HOURS);
 	}
 
 	@Override

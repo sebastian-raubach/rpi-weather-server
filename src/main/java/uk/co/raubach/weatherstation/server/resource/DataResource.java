@@ -9,7 +9,7 @@ import uk.co.raubach.weatherstation.resource.MeasurementPojo;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
-import uk.co.raubach.weatherstation.server.util.PropertyWatcher;
+import uk.co.raubach.weatherstation.server.util.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -17,6 +17,7 @@ import java.sql.*;
 import java.time.*;
 import java.util.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
 
@@ -70,9 +71,31 @@ public class DataResource extends ContextResource
 	}
 
 	@GET
+	@Path("/forecast")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Measurements> getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString, @QueryParam("uuid") String uuid)
+	public List<Measurements> getDataForecast(@QueryParam("start") String startString, @QueryParam("end") String endString)
+	{
+		Timestamp start = getDate(startString);
+		Timestamp end = getDate(endString);
+
+		if (start != null && end != null && ForecastThread.FORECAST != null)
+		{
+			return ForecastThread.FORECAST.stream()
+										  .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
+										  .sorted((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()))
+										  .collect(Collectors.toList());
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Measurements> getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString)
 		throws IOException, SQLException
 	{
 		Timestamp start = getDate(startString);
