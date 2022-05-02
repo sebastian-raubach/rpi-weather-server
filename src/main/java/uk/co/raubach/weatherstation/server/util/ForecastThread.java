@@ -27,8 +27,8 @@ public class ForecastThread implements Runnable
 		OkHttpClient client = new OkHttpClient();
 
 		HttpUrl.Builder builder = HttpUrl.parse("https://api.met.no/weatherapi/locationforecast/2.0/compact").newBuilder()
-										 .addQueryParameter("lat", "57.0073791")
-										 .addQueryParameter("lon", "-3.4114713");
+										 .addQueryParameter("lat", PropertyWatcher.get("latitude"))
+										 .addQueryParameter("lon", PropertyWatcher.get("longitude"));
 
 		HttpUrl builtUrl = builder.build();
 
