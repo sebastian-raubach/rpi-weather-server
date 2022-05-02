@@ -144,8 +144,6 @@ public class WUUploaderThread implements Runnable
 							   .url(builtUrl)
 							   .build();
 
-						   Logger.getLogger("").info("SENDING DATA TO WU: " + request.toString());
-
 						   try (Response response = client.newCall(request).execute())
 						   {
 							   if (response.isSuccessful())
