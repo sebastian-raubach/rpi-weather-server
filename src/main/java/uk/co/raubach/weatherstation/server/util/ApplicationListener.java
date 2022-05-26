@@ -25,7 +25,7 @@ public class ApplicationListener implements ServletContextListener
 
 		backgroundScheduler = Executors.newSingleThreadScheduledExecutor();
 		backgroundScheduler.scheduleAtFixedRate(new WUUploaderThread(), 1, 10, TimeUnit.MINUTES);
-		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 1, TimeUnit.DAYS);
+		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 3, TimeUnit.HOURS);
 
 		if (!StringUtils.isEmpty(PropertyWatcher.get("latitude")) && !StringUtils.isEmpty(PropertyWatcher.get("longitude")) && !StringUtils.isEmpty("openweathermap.key"))
 			backgroundScheduler.scheduleAtFixedRate(new ForecastThread(), 0, 1, TimeUnit.HOURS);
