@@ -1,7 +1,7 @@
 package uk.co.raubach.weatherstation.server.resource;
 
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.*;
 import org.jooq.DSLContext;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.DailyStats;
@@ -49,7 +49,7 @@ public class DailyStatsResource extends ContextResource
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DailyStats> getDailyStats(@QueryParam("start") String startString, @QueryParam("end") String endString)
+	public Response getDailyStats(@QueryParam("start") String startString, @QueryParam("end") String endString)
 		throws IOException, SQLException
 	{
 		Timestamp start = getTimestamp(startString);
@@ -63,55 +63,56 @@ public class DailyStatsResource extends ContextResource
 												 .and(AGGREGATED.DATE.le(new java.sql.Date(end.getTime())))
 												 .fetchInto(Aggregated.class);
 
-			return statsDaily.stream()
-							 .map(r -> {
-								 DailyStats result = new DailyStats();
-								 result.setDate(new Date(r.getDate().getTime()));
+			return Response.ok(statsDaily.stream()
+										 .map(r -> {
+											 DailyStats result = new DailyStats();
+											 result.setDate(new Date(r.getDate().getTime()));
 
-								 DailyStats.TypeStats min = new DailyStats.TypeStats();
-								 min.setAmbientTemp(r.getMinAmbientTemp());
-								 min.setGroundTemp(r.getMinGroundTemp());
-								 min.setHumidity(r.getMinHumidity());
-								 min.setPressure(r.getMinPressure());
-								 min.setRainfall(r.getSumRainfall());
-								 min.setWindAverage(r.getMinWindAverage());
-								 min.setWindGust(r.getMinWindGust());
-								 min.setWindSpeed(r.getMinWindSpeed());
-								 DailyStats.TypeStats max = new DailyStats.TypeStats();
-								 max.setAmbientTemp(r.getMaxAmbientTemp());
-								 max.setGroundTemp(r.getMaxGroundTemp());
-								 max.setHumidity(r.getMaxHumidity());
-								 max.setPressure(r.getMaxPressure());
-								 max.setRainfall(r.getSumRainfall());
-								 max.setWindAverage(r.getMaxWindAverage());
-								 max.setWindGust(r.getMaxWindGust());
-								 max.setWindSpeed(r.getMaxWindSpeed());
-								 DailyStats.TypeStats avg = new DailyStats.TypeStats();
-								 avg.setAmbientTemp(r.getAvgAmbientTemp());
-								 avg.setGroundTemp(r.getAvgGroundTemp());
-								 avg.setHumidity(r.getAvgHumidity());
-								 avg.setPressure(r.getAvgPressure());
-								 avg.setRainfall(r.getSumRainfall());
-								 avg.setWindAverage(r.getAvgWindAverage());
-								 avg.setWindGust(r.getAvgWindGust());
-								 avg.setWindSpeed(r.getAvgWindSpeed());
-								 DailyStats.TypeStats std = new DailyStats.TypeStats();
-								 std.setAmbientTemp(r.getStdAmbientTemp());
-								 std.setGroundTemp(r.getStdGroundTemp());
-								 std.setHumidity(r.getStdHumidity());
-								 std.setPressure(r.getStdPressure());
-								 std.setRainfall(r.getSumRainfall());
-								 std.setWindAverage(r.getStdWindAverage());
-								 std.setWindGust(r.getStdWindGust());
-								 std.setWindSpeed(r.getStdWindSpeed());
+											 DailyStats.TypeStats min = new DailyStats.TypeStats();
+											 min.setAmbientTemp(r.getMinAmbientTemp());
+											 min.setGroundTemp(r.getMinGroundTemp());
+											 min.setHumidity(r.getMinHumidity());
+											 min.setPressure(r.getMinPressure());
+											 min.setRainfall(r.getSumRainfall());
+											 min.setWindAverage(r.getMinWindAverage());
+											 min.setWindGust(r.getMinWindGust());
+											 min.setWindSpeed(r.getMinWindSpeed());
+											 DailyStats.TypeStats max = new DailyStats.TypeStats();
+											 max.setAmbientTemp(r.getMaxAmbientTemp());
+											 max.setGroundTemp(r.getMaxGroundTemp());
+											 max.setHumidity(r.getMaxHumidity());
+											 max.setPressure(r.getMaxPressure());
+											 max.setRainfall(r.getSumRainfall());
+											 max.setWindAverage(r.getMaxWindAverage());
+											 max.setWindGust(r.getMaxWindGust());
+											 max.setWindSpeed(r.getMaxWindSpeed());
+											 DailyStats.TypeStats avg = new DailyStats.TypeStats();
+											 avg.setAmbientTemp(r.getAvgAmbientTemp());
+											 avg.setGroundTemp(r.getAvgGroundTemp());
+											 avg.setHumidity(r.getAvgHumidity());
+											 avg.setPressure(r.getAvgPressure());
+											 avg.setRainfall(r.getSumRainfall());
+											 avg.setWindAverage(r.getAvgWindAverage());
+											 avg.setWindGust(r.getAvgWindGust());
+											 avg.setWindSpeed(r.getAvgWindSpeed());
+											 DailyStats.TypeStats std = new DailyStats.TypeStats();
+											 std.setAmbientTemp(r.getStdAmbientTemp());
+											 std.setGroundTemp(r.getStdGroundTemp());
+											 std.setHumidity(r.getStdHumidity());
+											 std.setPressure(r.getStdPressure());
+											 std.setRainfall(r.getSumRainfall());
+											 std.setWindAverage(r.getStdWindAverage());
+											 std.setWindGust(r.getStdWindGust());
+											 std.setWindSpeed(r.getStdWindSpeed());
 
-								 result.setMin(min);
-								 result.setMax(max);
-								 result.setAvg(avg);
-								 result.setStdv(std);
+											 result.setMin(min);
+											 result.setMax(max);
+											 result.setAvg(avg);
+											 result.setStdv(std);
 
-								 return result;
-							 }).collect(Collectors.toList());
+											 return result;
+										 }).collect(Collectors.toList()))
+						   .build();
 
 		}
 	}

@@ -74,28 +74,29 @@ public class DataResource extends ContextResource
 	@Path("/forecast")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Measurements> getDataForecast(@QueryParam("start") String startString, @QueryParam("end") String endString)
+	public Response getDataForecast(@QueryParam("start") String startString, @QueryParam("end") String endString)
 	{
 		Timestamp start = getDate(startString);
 		Timestamp end = getDate(endString);
 
 		if (start != null && end != null && ForecastThread.FORECAST != null)
 		{
-			return ForecastThread.FORECAST.stream()
-										  .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
-										  .sorted((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()))
-										  .collect(Collectors.toList());
+			return Response.ok(ForecastThread.FORECAST.stream()
+													  .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
+													  .sorted((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()))
+													  .collect(Collectors.toList()))
+						   .build();
 		}
 		else
 		{
-			return null;
+			return Response.noContent().build();
 		}
 	}
 
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Measurements> getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString)
+	public Response getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString)
 		throws IOException, SQLException
 	{
 		Timestamp start = getDate(startString);
@@ -116,34 +117,8 @@ public class DataResource extends ContextResource
 			this.adjustWind(result);
 			this.adjustTemp(result);
 
-			return result;
+			return Response.ok(result).build();
 		}
-	}
-
-	private MeasurementsRecord adjustTemp(MeasurementsRecord record)
-	{
-		if (tempOffset != null && tempOffset.doubleValue() != 0)
-		{
-			// Adjust wind direction
-			BigDecimal ambientTemp = record.get(MEASUREMENTS.AMBIENT_TEMP);
-			BigDecimal groundTemp = record.get(MEASUREMENTS.GROUND_TEMP);
-
-			try
-			{
-				if (ambientTemp != null)
-					ambientTemp = ambientTemp.add(tempOffset);
-				if (groundTemp != null)
-					groundTemp = groundTemp.add(tempOffset);
-
-				record.set(MEASUREMENTS.AMBIENT_TEMP, ambientTemp);
-				record.set(MEASUREMENTS.GROUND_TEMP, groundTemp);
-			}
-			catch (Exception e)
-			{
-			}
-		}
-
-		return record;
 	}
 
 	private void adjustTemp(List<Measurements> result)
@@ -177,7 +152,6 @@ public class DataResource extends ContextResource
 			BigDecimal fullCircle = BigDecimal.valueOf(360);
 			result.forEach(r -> {
 				BigDecimal wind = r.getWindAverage();
-
 				if (wind != null)
 				{
 					wind = wind.subtract(windOffset);
@@ -189,7 +163,6 @@ public class DataResource extends ContextResource
 				}
 
 				wind = r.getWindSpeed();
-
 				if (wind != null)
 				{
 					wind = wind.multiply(windFactor);
@@ -197,7 +170,6 @@ public class DataResource extends ContextResource
 				}
 
 				wind = r.getWindGust();
-
 				if (wind != null)
 				{
 					wind = wind.multiply(windFactor);
@@ -205,48 +177,6 @@ public class DataResource extends ContextResource
 				}
 			});
 		}
-	}
-
-	private MeasurementsRecord adjustWind(MeasurementsRecord record)
-	{
-		if (windOffset != null && windOffset.doubleValue() != 0)
-		{
-			// Adjust wind direction
-			BigDecimal fullCircle = BigDecimal.valueOf(360);
-			BigDecimal wind = record.get(MEASUREMENTS.WIND_AVERAGE);
-
-			if (wind != null)
-			{
-				wind = wind.subtract(windOffset);
-				if (wind.doubleValue() < 0)
-				{
-					wind = wind.add(fullCircle);
-				}
-				record.set(MEASUREMENTS.WIND_AVERAGE, wind);
-			}
-
-			try
-			{
-				wind = record.get(MEASUREMENTS.WIND_SPEED);
-				wind = wind.multiply(windFactor);
-				record.set(MEASUREMENTS.WIND_SPEED, wind);
-			}
-			catch (Exception e)
-			{
-			}
-
-			try
-			{
-				wind = record.get(MEASUREMENTS.WIND_GUST);
-				wind = wind.multiply(windFactor);
-				record.set(MEASUREMENTS.WIND_GUST, wind);
-			}
-			catch (Exception e)
-			{
-			}
-		}
-
-		return record;
 	}
 
 //	@Get("txt")
@@ -291,19 +221,13 @@ public class DataResource extends ContextResource
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void postData(MeasurementPojo[] measurements, @QueryParam("uuid") String uuid)
+	public Response postData(MeasurementPojo[] measurements, @QueryParam("uuid") String uuid)
 		throws IOException, SQLException
 	{
 		if (!Objects.equals(uuid, PropertyWatcher.get("client.uuid")))
-		{
-			resp.sendError(Response.Status.UNAUTHORIZED.getStatusCode());
-			return;
-		}
+			return Response.status(Response.Status.UNAUTHORIZED).build();
 		else if (measurements == null)
-		{
-			resp.sendError(Response.Status.BAD_REQUEST.getStatusCode());
-			return;
-		}
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		else
 		{
 			try (Connection conn = Database.getDirectConnection();
@@ -329,5 +253,7 @@ public class DataResource extends ContextResource
 					  .forEach(UpdatableRecordImpl::store);
 			}
 		}
+
+		return Response.noContent().build();
 	}
 }
