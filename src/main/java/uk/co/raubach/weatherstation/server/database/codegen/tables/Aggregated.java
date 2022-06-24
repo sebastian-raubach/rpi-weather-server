@@ -39,7 +39,7 @@ import uk.co.raubach.weatherstation.server.database.codegen.tables.records.Aggre
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Aggregated extends TableImpl<AggregatedRecord> {
 
-    private static final long serialVersionUID = 415033339;
+    private static final long serialVersionUID = 863104734;
 
     /**
      * The reference instance of <code>weatherstation_db.aggregated</code>
@@ -63,6 +63,11 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
      * The column <code>weatherstation_db.aggregated.min_ground_temp</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> MIN_GROUND_TEMP = createField("min_ground_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.min_pi_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MIN_PI_TEMP = createField("min_pi_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.aggregated.min_pressure</code>.
@@ -100,6 +105,11 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
     public final TableField<AggregatedRecord, BigDecimal> MAX_GROUND_TEMP = createField("max_ground_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
+     * The column <code>weatherstation_db.aggregated.max_pi_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MAX_PI_TEMP = createField("max_pi_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
      * The column <code>weatherstation_db.aggregated.max_pressure</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> MAX_PRESSURE = createField("max_pressure", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
@@ -135,6 +145,11 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
     public final TableField<AggregatedRecord, BigDecimal> AVG_GROUND_TEMP = createField("avg_ground_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
+     * The column <code>weatherstation_db.aggregated.avg_pi_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> AVG_PI_TEMP = createField("avg_pi_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
      * The column <code>weatherstation_db.aggregated.avg_pressure</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> AVG_PRESSURE = createField("avg_pressure", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
@@ -168,6 +183,11 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
      * The column <code>weatherstation_db.aggregated.std_ground_temp</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> STD_GROUND_TEMP = createField("std_ground_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.std_pi_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> STD_PI_TEMP = createField("std_pi_temp", org.jooq.impl.SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.aggregated.std_pressure</code>.

@@ -42,6 +42,8 @@ dependencies {
     implementation 'javax.activation:activation:1.1.1'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
     implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+//    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+//    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.3'
 
     providedCompile 'jakarta.servlet:jakarta.servlet-api:5.0.0'
     implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-servlet:3.0.4'

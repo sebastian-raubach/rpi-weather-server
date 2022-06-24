@@ -29,7 +29,7 @@ import uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AggregatedRecord extends UpdatableRecordImpl<AggregatedRecord> {
 
-    private static final long serialVersionUID = 1440437331;
+    private static final long serialVersionUID = -1847622933;
 
     /**
      * Setter for <code>weatherstation_db.aggregated.min_ambient_temp</code>.
@@ -60,395 +60,451 @@ public class AggregatedRecord extends UpdatableRecordImpl<AggregatedRecord> {
     }
 
     /**
+     * Setter for <code>weatherstation_db.aggregated.min_pi_temp</code>.
+     */
+    public void setMinPiTemp(BigDecimal value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.min_pi_temp</code>.
+     */
+    public BigDecimal getMinPiTemp() {
+        return (BigDecimal) get(2);
+    }
+
+    /**
      * Setter for <code>weatherstation_db.aggregated.min_pressure</code>.
      */
     public void setMinPressure(BigDecimal value) {
-        set(2, value);
+        set(3, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.min_pressure</code>.
      */
     public BigDecimal getMinPressure() {
-        return (BigDecimal) get(2);
+        return (BigDecimal) get(3);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.min_humidity</code>.
      */
     public void setMinHumidity(BigDecimal value) {
-        set(3, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.min_humidity</code>.
      */
     public BigDecimal getMinHumidity() {
-        return (BigDecimal) get(3);
+        return (BigDecimal) get(4);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.min_wind_average</code>.
      */
     public void setMinWindAverage(BigDecimal value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.min_wind_average</code>.
      */
     public BigDecimal getMinWindAverage() {
-        return (BigDecimal) get(4);
+        return (BigDecimal) get(5);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.min_wind_speed</code>.
      */
     public void setMinWindSpeed(BigDecimal value) {
-        set(5, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.min_wind_speed</code>.
      */
     public BigDecimal getMinWindSpeed() {
-        return (BigDecimal) get(5);
+        return (BigDecimal) get(6);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.min_wind_gust</code>.
      */
     public void setMinWindGust(BigDecimal value) {
-        set(6, value);
+        set(7, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.min_wind_gust</code>.
      */
     public BigDecimal getMinWindGust() {
-        return (BigDecimal) get(6);
+        return (BigDecimal) get(7);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_ambient_temp</code>.
      */
     public void setMaxAmbientTemp(BigDecimal value) {
-        set(7, value);
+        set(8, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_ambient_temp</code>.
      */
     public BigDecimal getMaxAmbientTemp() {
-        return (BigDecimal) get(7);
+        return (BigDecimal) get(8);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_ground_temp</code>.
      */
     public void setMaxGroundTemp(BigDecimal value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_ground_temp</code>.
      */
     public BigDecimal getMaxGroundTemp() {
-        return (BigDecimal) get(8);
+        return (BigDecimal) get(9);
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.max_pi_temp</code>.
+     */
+    public void setMaxPiTemp(BigDecimal value) {
+        set(10, value);
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.max_pi_temp</code>.
+     */
+    public BigDecimal getMaxPiTemp() {
+        return (BigDecimal) get(10);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_pressure</code>.
      */
     public void setMaxPressure(BigDecimal value) {
-        set(9, value);
+        set(11, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_pressure</code>.
      */
     public BigDecimal getMaxPressure() {
-        return (BigDecimal) get(9);
+        return (BigDecimal) get(11);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_humidity</code>.
      */
     public void setMaxHumidity(BigDecimal value) {
-        set(10, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_humidity</code>.
      */
     public BigDecimal getMaxHumidity() {
-        return (BigDecimal) get(10);
+        return (BigDecimal) get(12);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_wind_average</code>.
      */
     public void setMaxWindAverage(BigDecimal value) {
-        set(11, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_wind_average</code>.
      */
     public BigDecimal getMaxWindAverage() {
-        return (BigDecimal) get(11);
+        return (BigDecimal) get(13);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_wind_speed</code>.
      */
     public void setMaxWindSpeed(BigDecimal value) {
-        set(12, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_wind_speed</code>.
      */
     public BigDecimal getMaxWindSpeed() {
-        return (BigDecimal) get(12);
+        return (BigDecimal) get(14);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.max_wind_gust</code>.
      */
     public void setMaxWindGust(BigDecimal value) {
-        set(13, value);
+        set(15, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.max_wind_gust</code>.
      */
     public BigDecimal getMaxWindGust() {
-        return (BigDecimal) get(13);
+        return (BigDecimal) get(15);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_ambient_temp</code>.
      */
     public void setAvgAmbientTemp(BigDecimal value) {
-        set(14, value);
+        set(16, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_ambient_temp</code>.
      */
     public BigDecimal getAvgAmbientTemp() {
-        return (BigDecimal) get(14);
+        return (BigDecimal) get(16);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_ground_temp</code>.
      */
     public void setAvgGroundTemp(BigDecimal value) {
-        set(15, value);
+        set(17, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_ground_temp</code>.
      */
     public BigDecimal getAvgGroundTemp() {
-        return (BigDecimal) get(15);
+        return (BigDecimal) get(17);
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.avg_pi_temp</code>.
+     */
+    public void setAvgPiTemp(BigDecimal value) {
+        set(18, value);
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.avg_pi_temp</code>.
+     */
+    public BigDecimal getAvgPiTemp() {
+        return (BigDecimal) get(18);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_pressure</code>.
      */
     public void setAvgPressure(BigDecimal value) {
-        set(16, value);
+        set(19, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_pressure</code>.
      */
     public BigDecimal getAvgPressure() {
-        return (BigDecimal) get(16);
+        return (BigDecimal) get(19);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_humidity</code>.
      */
     public void setAvgHumidity(BigDecimal value) {
-        set(17, value);
+        set(20, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_humidity</code>.
      */
     public BigDecimal getAvgHumidity() {
-        return (BigDecimal) get(17);
+        return (BigDecimal) get(20);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_wind_average</code>.
      */
     public void setAvgWindAverage(BigDecimal value) {
-        set(18, value);
+        set(21, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_wind_average</code>.
      */
     public BigDecimal getAvgWindAverage() {
-        return (BigDecimal) get(18);
+        return (BigDecimal) get(21);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_wind_speed</code>.
      */
     public void setAvgWindSpeed(BigDecimal value) {
-        set(19, value);
+        set(22, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_wind_speed</code>.
      */
     public BigDecimal getAvgWindSpeed() {
-        return (BigDecimal) get(19);
+        return (BigDecimal) get(22);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.avg_wind_gust</code>.
      */
     public void setAvgWindGust(BigDecimal value) {
-        set(20, value);
+        set(23, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.avg_wind_gust</code>.
      */
     public BigDecimal getAvgWindGust() {
-        return (BigDecimal) get(20);
+        return (BigDecimal) get(23);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_ambient_temp</code>.
      */
     public void setStdAmbientTemp(BigDecimal value) {
-        set(21, value);
+        set(24, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_ambient_temp</code>.
      */
     public BigDecimal getStdAmbientTemp() {
-        return (BigDecimal) get(21);
+        return (BigDecimal) get(24);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_ground_temp</code>.
      */
     public void setStdGroundTemp(BigDecimal value) {
-        set(22, value);
+        set(25, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_ground_temp</code>.
      */
     public BigDecimal getStdGroundTemp() {
-        return (BigDecimal) get(22);
+        return (BigDecimal) get(25);
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.std_pi_temp</code>.
+     */
+    public void setStdPiTemp(BigDecimal value) {
+        set(26, value);
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.std_pi_temp</code>.
+     */
+    public BigDecimal getStdPiTemp() {
+        return (BigDecimal) get(26);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_pressure</code>.
      */
     public void setStdPressure(BigDecimal value) {
-        set(23, value);
+        set(27, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_pressure</code>.
      */
     public BigDecimal getStdPressure() {
-        return (BigDecimal) get(23);
+        return (BigDecimal) get(27);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_humidity</code>.
      */
     public void setStdHumidity(BigDecimal value) {
-        set(24, value);
+        set(28, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_humidity</code>.
      */
     public BigDecimal getStdHumidity() {
-        return (BigDecimal) get(24);
+        return (BigDecimal) get(28);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_wind_average</code>.
      */
     public void setStdWindAverage(BigDecimal value) {
-        set(25, value);
+        set(29, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_wind_average</code>.
      */
     public BigDecimal getStdWindAverage() {
-        return (BigDecimal) get(25);
+        return (BigDecimal) get(29);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_wind_speed</code>.
      */
     public void setStdWindSpeed(BigDecimal value) {
-        set(26, value);
+        set(30, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_wind_speed</code>.
      */
     public BigDecimal getStdWindSpeed() {
-        return (BigDecimal) get(26);
+        return (BigDecimal) get(30);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.std_wind_gust</code>.
      */
     public void setStdWindGust(BigDecimal value) {
-        set(27, value);
+        set(31, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.std_wind_gust</code>.
      */
     public BigDecimal getStdWindGust() {
-        return (BigDecimal) get(27);
+        return (BigDecimal) get(31);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.sum_rainfall</code>.
      */
     public void setSumRainfall(BigDecimal value) {
-        set(28, value);
+        set(32, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.sum_rainfall</code>.
      */
     public BigDecimal getSumRainfall() {
-        return (BigDecimal) get(28);
+        return (BigDecimal) get(32);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated.date</code>.
      */
     public void setDate(Date value) {
-        set(29, value);
+        set(33, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated.date</code>.
      */
     public Date getDate() {
-        return (Date) get(29);
+        return (Date) get(33);
     }
 
     // -------------------------------------------------------------------------
@@ -477,39 +533,43 @@ public class AggregatedRecord extends UpdatableRecordImpl<AggregatedRecord> {
     /**
      * Create a detached, initialised AggregatedRecord
      */
-    public AggregatedRecord(BigDecimal minAmbientTemp, BigDecimal minGroundTemp, BigDecimal minPressure, BigDecimal minHumidity, BigDecimal minWindAverage, BigDecimal minWindSpeed, BigDecimal minWindGust, BigDecimal maxAmbientTemp, BigDecimal maxGroundTemp, BigDecimal maxPressure, BigDecimal maxHumidity, BigDecimal maxWindAverage, BigDecimal maxWindSpeed, BigDecimal maxWindGust, BigDecimal avgAmbientTemp, BigDecimal avgGroundTemp, BigDecimal avgPressure, BigDecimal avgHumidity, BigDecimal avgWindAverage, BigDecimal avgWindSpeed, BigDecimal avgWindGust, BigDecimal stdAmbientTemp, BigDecimal stdGroundTemp, BigDecimal stdPressure, BigDecimal stdHumidity, BigDecimal stdWindAverage, BigDecimal stdWindSpeed, BigDecimal stdWindGust, BigDecimal sumRainfall, Date date) {
+    public AggregatedRecord(BigDecimal minAmbientTemp, BigDecimal minGroundTemp, BigDecimal minPiTemp, BigDecimal minPressure, BigDecimal minHumidity, BigDecimal minWindAverage, BigDecimal minWindSpeed, BigDecimal minWindGust, BigDecimal maxAmbientTemp, BigDecimal maxGroundTemp, BigDecimal maxPiTemp, BigDecimal maxPressure, BigDecimal maxHumidity, BigDecimal maxWindAverage, BigDecimal maxWindSpeed, BigDecimal maxWindGust, BigDecimal avgAmbientTemp, BigDecimal avgGroundTemp, BigDecimal avgPiTemp, BigDecimal avgPressure, BigDecimal avgHumidity, BigDecimal avgWindAverage, BigDecimal avgWindSpeed, BigDecimal avgWindGust, BigDecimal stdAmbientTemp, BigDecimal stdGroundTemp, BigDecimal stdPiTemp, BigDecimal stdPressure, BigDecimal stdHumidity, BigDecimal stdWindAverage, BigDecimal stdWindSpeed, BigDecimal stdWindGust, BigDecimal sumRainfall, Date date) {
         super(Aggregated.AGGREGATED);
 
         set(0, minAmbientTemp);
         set(1, minGroundTemp);
-        set(2, minPressure);
-        set(3, minHumidity);
-        set(4, minWindAverage);
-        set(5, minWindSpeed);
-        set(6, minWindGust);
-        set(7, maxAmbientTemp);
-        set(8, maxGroundTemp);
-        set(9, maxPressure);
-        set(10, maxHumidity);
-        set(11, maxWindAverage);
-        set(12, maxWindSpeed);
-        set(13, maxWindGust);
-        set(14, avgAmbientTemp);
-        set(15, avgGroundTemp);
-        set(16, avgPressure);
-        set(17, avgHumidity);
-        set(18, avgWindAverage);
-        set(19, avgWindSpeed);
-        set(20, avgWindGust);
-        set(21, stdAmbientTemp);
-        set(22, stdGroundTemp);
-        set(23, stdPressure);
-        set(24, stdHumidity);
-        set(25, stdWindAverage);
-        set(26, stdWindSpeed);
-        set(27, stdWindGust);
-        set(28, sumRainfall);
-        set(29, date);
+        set(2, minPiTemp);
+        set(3, minPressure);
+        set(4, minHumidity);
+        set(5, minWindAverage);
+        set(6, minWindSpeed);
+        set(7, minWindGust);
+        set(8, maxAmbientTemp);
+        set(9, maxGroundTemp);
+        set(10, maxPiTemp);
+        set(11, maxPressure);
+        set(12, maxHumidity);
+        set(13, maxWindAverage);
+        set(14, maxWindSpeed);
+        set(15, maxWindGust);
+        set(16, avgAmbientTemp);
+        set(17, avgGroundTemp);
+        set(18, avgPiTemp);
+        set(19, avgPressure);
+        set(20, avgHumidity);
+        set(21, avgWindAverage);
+        set(22, avgWindSpeed);
+        set(23, avgWindGust);
+        set(24, stdAmbientTemp);
+        set(25, stdGroundTemp);
+        set(26, stdPiTemp);
+        set(27, stdPressure);
+        set(28, stdHumidity);
+        set(29, stdWindAverage);
+        set(30, stdWindSpeed);
+        set(31, stdWindGust);
+        set(32, sumRainfall);
+        set(33, date);
     }
 // @formatter:on
 }

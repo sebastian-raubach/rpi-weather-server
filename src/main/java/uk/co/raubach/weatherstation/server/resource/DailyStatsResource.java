@@ -71,6 +71,7 @@ public class DailyStatsResource extends ContextResource
 											 DailyStats.TypeStats min = new DailyStats.TypeStats();
 											 min.setAmbientTemp(r.getMinAmbientTemp());
 											 min.setGroundTemp(r.getMinGroundTemp());
+											 min.setPiTemp(r.getMinPiTemp());
 											 min.setHumidity(r.getMinHumidity());
 											 min.setPressure(r.getMinPressure());
 											 min.setRainfall(r.getSumRainfall());
@@ -80,6 +81,7 @@ public class DailyStatsResource extends ContextResource
 											 DailyStats.TypeStats max = new DailyStats.TypeStats();
 											 max.setAmbientTemp(r.getMaxAmbientTemp());
 											 max.setGroundTemp(r.getMaxGroundTemp());
+											 max.setPiTemp(r.getMaxPiTemp());
 											 max.setHumidity(r.getMaxHumidity());
 											 max.setPressure(r.getMaxPressure());
 											 max.setRainfall(r.getSumRainfall());
@@ -89,6 +91,7 @@ public class DailyStatsResource extends ContextResource
 											 DailyStats.TypeStats avg = new DailyStats.TypeStats();
 											 avg.setAmbientTemp(r.getAvgAmbientTemp());
 											 avg.setGroundTemp(r.getAvgGroundTemp());
+											 avg.setPiTemp(r.getAvgPiTemp());
 											 avg.setHumidity(r.getAvgHumidity());
 											 avg.setPressure(r.getAvgPressure());
 											 avg.setRainfall(r.getSumRainfall());
@@ -98,6 +101,7 @@ public class DailyStatsResource extends ContextResource
 											 DailyStats.TypeStats std = new DailyStats.TypeStats();
 											 std.setAmbientTemp(r.getStdAmbientTemp());
 											 std.setGroundTemp(r.getStdGroundTemp());
+											 std.setPiTemp(r.getStdPiTemp());
 											 std.setHumidity(r.getStdHumidity());
 											 std.setPressure(r.getStdPressure());
 											 std.setRainfall(r.getSumRainfall());

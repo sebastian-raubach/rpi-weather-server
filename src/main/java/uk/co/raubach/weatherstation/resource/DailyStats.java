@@ -65,6 +65,7 @@ public class DailyStats
 	{
 		private BigDecimal ambientTemp;
 		private BigDecimal groundTemp;
+		private BigDecimal piTemp;
 		private BigDecimal pressure;
 		private BigDecimal humidity;
 		private BigDecimal windAverage;
@@ -94,6 +95,17 @@ public class DailyStats
 		public void setGroundTemp(BigDecimal groundTemp)
 		{
 			this.groundTemp = groundTemp;
+		}
+
+		public BigDecimal getPiTemp()
+		{
+			return piTemp;
+		}
+
+		public TypeStats setPiTemp(BigDecimal piTemp)
+		{
+			this.piTemp = piTemp;
+			return this;
 		}
 
 		public BigDecimal getPressure()
