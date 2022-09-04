@@ -95,6 +95,7 @@ public class WUUploaderThread implements Runnable
 						BigDecimal ambientTemp = r.get(MEASUREMENTS.AMBIENT_TEMP);
 						if (ambientTemp != null)
 						{
+							ambientTemp = ambientTemp.add(tempOffset);
 							builder.addQueryParameter("tempf", Double.toString(ambientTemp.doubleValue() * (9 / 5.0) + 32));
 						}
 
@@ -147,7 +148,6 @@ public class WUUploaderThread implements Runnable
 
 						if (ambientTemp != null && humidity != null)
 						{
-							ambientTemp = ambientTemp.add(tempOffset);
 							double temp = ambientTemp.doubleValue();
 							double hum = humidity.doubleValue();
 							double dewPoint = (temp - (14.55 + 0.114 * temp) * (1 - (0.01 * hum)) - Math.pow(((2.5 + 0.007 * temp) * (1 - (0.01 * hum))), 3) - (15.9 + 0.117 * temp) * Math.pow((1 - (0.01 * hum)), 14));
