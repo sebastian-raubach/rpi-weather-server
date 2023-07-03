@@ -21,9 +21,9 @@ public class TotalStatsResource extends ContextResource
 	public Response getTotal()
 		throws IndexOutOfBoundsException, SQLException
 	{
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			WeeklyStats result = new WeeklyStats();
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));

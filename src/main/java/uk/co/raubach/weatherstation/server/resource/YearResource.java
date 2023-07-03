@@ -19,9 +19,9 @@ public class YearResource extends ContextResource
 	public Response getYears()
 		throws IndexOutOfBoundsException, SQLException
 	{
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			Field<Integer> year = DSL.year(MEASUREMENTS.CREATED).as("year");
 			return Response.ok(context.selectDistinct(year).from(MEASUREMENTS).orderBy(year).fetchInto(Integer.class)).build();
 		}

@@ -55,9 +55,9 @@ public class DailyStatsResource extends ContextResource
 		Timestamp start = getTimestamp(startString);
 		Timestamp end = getTimestamp(endString);
 
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			List<Aggregated> statsDaily = context.selectFrom(AGGREGATED)
 												 .where(AGGREGATED.DATE.ge(new java.sql.Date(start.getTime())))
 												 .and(AGGREGATED.DATE.le(new java.sql.Date(end.getTime())))
@@ -78,6 +78,7 @@ public class DailyStatsResource extends ContextResource
 											 min.setWindAverage(r.getMinWindAverage());
 											 min.setWindGust(r.getMinWindGust());
 											 min.setWindSpeed(r.getMinWindSpeed());
+											 min.setLux(r.getMinLux());
 											 DailyStats.TypeStats max = new DailyStats.TypeStats();
 											 max.setAmbientTemp(r.getMaxAmbientTemp());
 											 max.setGroundTemp(r.getMaxGroundTemp());
@@ -88,6 +89,7 @@ public class DailyStatsResource extends ContextResource
 											 max.setWindAverage(r.getMaxWindAverage());
 											 max.setWindGust(r.getMaxWindGust());
 											 max.setWindSpeed(r.getMaxWindSpeed());
+											 max.setLux(r.getMaxLux());
 											 DailyStats.TypeStats avg = new DailyStats.TypeStats();
 											 avg.setAmbientTemp(r.getAvgAmbientTemp());
 											 avg.setGroundTemp(r.getAvgGroundTemp());
@@ -98,6 +100,7 @@ public class DailyStatsResource extends ContextResource
 											 avg.setWindAverage(r.getAvgWindAverage());
 											 avg.setWindGust(r.getAvgWindGust());
 											 avg.setWindSpeed(r.getAvgWindSpeed());
+											 avg.setLux(r.getAvgLux());
 											 DailyStats.TypeStats std = new DailyStats.TypeStats();
 											 std.setAmbientTemp(r.getStdAmbientTemp());
 											 std.setGroundTemp(r.getStdGroundTemp());
@@ -108,6 +111,7 @@ public class DailyStatsResource extends ContextResource
 											 std.setWindAverage(r.getStdWindAverage());
 											 std.setWindGust(r.getStdWindGust());
 											 std.setWindSpeed(r.getStdWindSpeed());
+											 std.setLux(r.getStdLux());
 
 											 result.setMin(min);
 											 result.setMax(max);

@@ -17,6 +17,7 @@ import java.sql.*;
 import java.time.*;
 import java.util.Date;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
@@ -102,9 +103,9 @@ public class DataResource extends ContextResource
 		Timestamp start = getDate(startString);
 		Timestamp end = getDate(endString);
 
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			SelectWhereStep<?> step = context.selectFrom(MEASUREMENTS);
 
 			if (start != null)
@@ -161,8 +162,12 @@ public class DataResource extends ContextResource
 					}
 					r.setWindAverage(wind);
 				}
+			});
+		}
 
-				wind = r.getWindSpeed();
+		if (windFactor != null && windFactor.doubleValue() != 1) {
+			result.forEach(r -> {
+				BigDecimal wind = r.getWindSpeed();
 				if (wind != null)
 				{
 					wind = wind.multiply(windFactor);
@@ -230,9 +235,9 @@ public class DataResource extends ContextResource
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		else
 		{
-			try (Connection conn = Database.getDirectConnection();
-				 DSLContext context = Database.getContext(conn))
+			try (Connection conn = Database.getDirectConnection())
 			{
+				DSLContext context = Database.getContext(conn);
 				Arrays.stream(measurements)
 					  .filter(m -> m.getCreated() != null)
 					  .map(m -> {
@@ -246,6 +251,7 @@ public class DataResource extends ContextResource
 						  record.setWindGust(m.getWindGust());
 						  record.setRainfall(m.getRainfall());
 						  record.setPiTemp(m.getPiTemp());
+						  record.setLux(m.getLux());
 						  record.setUploadedWu(false);
 						  record.setCreated(getDate(m.getCreated()));
 						  return record;

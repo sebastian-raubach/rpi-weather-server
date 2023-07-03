@@ -13,6 +13,7 @@ public class MeasurementPojo
 	private BigDecimal windGust;
 	private BigDecimal rainfall;
 	private BigDecimal piTemp;
+	private BigDecimal lux;
 	private String     created;
 
 	public BigDecimal getAmbientTemp()
@@ -103,6 +104,17 @@ public class MeasurementPojo
 	public void setPiTemp(BigDecimal piTemp)
 	{
 		this.piTemp = piTemp;
+	}
+
+	public BigDecimal getLux()
+	{
+		return lux;
+	}
+
+	public MeasurementPojo setLux(BigDecimal lux)
+	{
+		this.lux = lux;
+		return this;
 	}
 
 	public String getCreated()

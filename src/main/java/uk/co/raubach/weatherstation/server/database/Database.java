@@ -10,6 +10,7 @@ import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.server.database.codegen.WeatherstationDb;
 
 import java.io.*;
+import java.io.File;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -54,10 +55,9 @@ public class Database
 		boolean connectionSuccessful = false;
 		for (int attempt = 0; attempt < 10; attempt++)
 		{
-			try (Connection conn = getDirectConnection();
-				 DSLContext context = Database.getContext(conn))
+			try (Connection conn = getDirectConnection())
 			{
-				context.close();
+				Database.getContext(conn);
 				connectionSuccessful = true;
 				break;
 			}
@@ -83,9 +83,9 @@ public class Database
 		if (initAndUpdate)
 		{
 			boolean databaseExists = true;
-			try (Connection conn = getDirectConnection();
-				 DSLContext context = Database.getContext(conn))
+			try (Connection conn = getDirectConnection())
 			{
+				DSLContext context = Database.getContext(conn);
 				// Try and see if the `measurements` table exists
 				context.selectFrom(MEASUREMENTS)
 					   .fetchAny();
@@ -122,9 +122,9 @@ public class Database
 				Logger.getLogger("").log(Level.INFO, "DATABASE EXISTS, NO NEED TO CREATE IT!");
 			}
 
-			try (Connection conn = getDirectConnection();
-				 DSLContext context = Database.getContext(conn))
+			try (Connection conn = getDirectConnection())
 			{
+				DSLContext context = Database.getContext(conn);
 				context.execute("ALTER DATABASE `" + databaseName + "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 			}
 			catch (SQLException | DataAccessException e)

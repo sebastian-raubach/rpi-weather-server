@@ -19,9 +19,9 @@ public class LastUpdateResource extends ContextResource
 	public Response getLastUpdate()
 		throws SQLException
 	{
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			return Response.ok(context.select(DSL.max(MEASUREMENTS.CREATED)).from(MEASUREMENTS).fetchInto(Timestamp.class)).build();
 		}
 	}

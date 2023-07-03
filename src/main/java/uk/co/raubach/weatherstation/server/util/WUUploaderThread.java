@@ -67,9 +67,9 @@ public class WUUploaderThread implements Runnable
 		if (StringUtils.isEmpty(url) || StringUtils.isEmpty(id) || StringUtils.isEmpty(password))
 			return;
 
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			Measurements m = MEASUREMENTS.as("m");
 
 			Field<BigDecimal> lastSixty = DSL.select(DSL.sum(m.RAINFALL)).from(m).where(timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, m.CREATED).between(0, 60)).asField("last_sixty");

@@ -72,6 +72,7 @@ public class DailyStats
 		private BigDecimal windSpeed;
 		private BigDecimal windGust;
 		private BigDecimal rainfall;
+		private BigDecimal lux;
 
 		public TypeStats()
 		{
@@ -166,6 +167,17 @@ public class DailyStats
 		public void setRainfall(BigDecimal rainfall)
 		{
 			this.rainfall = rainfall;
+		}
+
+		public BigDecimal getLux()
+		{
+			return lux;
+		}
+
+		public TypeStats setLux(BigDecimal lux)
+		{
+			this.lux = lux;
+			return this;
 		}
 	}
 }

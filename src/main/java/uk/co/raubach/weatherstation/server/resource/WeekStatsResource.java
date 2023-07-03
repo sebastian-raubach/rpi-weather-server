@@ -21,9 +21,9 @@ public class WeekStatsResource extends ContextResource
 	public Response getWeekly()
 		throws IndexOutOfBoundsException, SQLException
 	{
-		try (Connection conn = Database.getDirectConnection();
-			 DSLContext context = Database.getContext(conn))
+		try (Connection conn = Database.getDirectConnection())
 		{
+			DSLContext context = Database.getContext(conn);
 			Condition condition = DSL.abs(DSL.dateDiff(AGGREGATED.DATE, DSL.currentDate())).le(7);
 
 			WeeklyStats result = new WeeklyStats();
