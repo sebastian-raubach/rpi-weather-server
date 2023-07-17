@@ -17,7 +17,6 @@ import java.sql.*;
 import java.time.*;
 import java.util.Date;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
@@ -115,14 +114,14 @@ public class DataResource extends ContextResource
 
 			List<Measurements> result = step.fetchInto(Measurements.class);
 
-			this.adjustWind(result);
-			this.adjustTemp(result);
+			adjustWind(result);
+			adjustTemp(result);
 
 			return Response.ok(result).build();
 		}
 	}
 
-	private void adjustTemp(List<Measurements> result)
+	public static void adjustTemp(List<Measurements> result)
 	{
 		if (tempOffset != null && tempOffset.doubleValue() != 0)
 		{
@@ -145,7 +144,7 @@ public class DataResource extends ContextResource
 		}
 	}
 
-	private void adjustWind(List<Measurements> result)
+	public static void adjustWind(List<Measurements> result)
 	{
 		if (windOffset != null && windOffset.doubleValue() != 0)
 		{

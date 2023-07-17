@@ -4,7 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import uk.co.raubach.weatherstation.resource.WeeklyStats;
+import uk.co.raubach.weatherstation.resource.AggregatedStats;
 import uk.co.raubach.weatherstation.server.database.Database;
 
 import java.math.BigDecimal;
@@ -24,25 +24,25 @@ public class TotalStatsResource extends ContextResource
 		try (Connection conn = Database.getDirectConnection())
 		{
 			DSLContext context = Database.getContext(conn);
-			WeeklyStats result = new WeeklyStats();
+			AggregatedStats result = new AggregatedStats();
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));
 			result.setMostRain(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.SUM_RAINFALL.as("value"))
 									  .from(AGGREGATED)
 									  .where(AGGREGATED.SUM_RAINFALL.eq(DSL.select(DSL.max(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED)))
-									  .fetchAnyInto(WeeklyStats.Day.class));
+									  .fetchAnyInto(AggregatedStats.Day.class));
 			result.setMostWind(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_WIND_GUST.as("value"))
 									  .from(AGGREGATED)
 									  .where(AGGREGATED.MAX_WIND_GUST.eq(DSL.select(DSL.max(AGGREGATED.MAX_WIND_GUST)).from(AGGREGATED)))
-									  .fetchAnyInto(WeeklyStats.Day.class));
+									  .fetchAnyInto(AggregatedStats.Day.class));
 			result.setHighestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_AMBIENT_TEMP.as("value"))
 										 .from(AGGREGATED)
 										 .where(AGGREGATED.MAX_AMBIENT_TEMP.eq(DSL.select(DSL.max(AGGREGATED.MAX_AMBIENT_TEMP)).from(AGGREGATED)))
-										 .fetchAnyInto(WeeklyStats.Day.class));
+										 .fetchAnyInto(AggregatedStats.Day.class));
 			result.setLowestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MIN_AMBIENT_TEMP.as("value"))
 										.from(AGGREGATED)
 										.where(AGGREGATED.MIN_AMBIENT_TEMP.eq(DSL.select(DSL.min(AGGREGATED.MIN_AMBIENT_TEMP)).from(AGGREGATED)))
-										.fetchAnyInto(WeeklyStats.Day.class));
+										.fetchAnyInto(AggregatedStats.Day.class));
 
 			return Response.ok(result).build();
 		}

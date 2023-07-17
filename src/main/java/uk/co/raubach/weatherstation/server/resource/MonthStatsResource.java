@@ -6,7 +6,7 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import uk.co.raubach.weatherstation.resource.AggregatedStats;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.*;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Aggregated;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -17,8 +17,8 @@ import java.util.*;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.AGGREGATED;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
-@Path("stats/weekly")
-public class WeekStatsResource extends ContextResource
+@Path("stats/monthly")
+public class MonthStatsResource extends ContextResource
 {
 	@GET
 	@Path("/measurements")
@@ -35,12 +35,11 @@ public class WeekStatsResource extends ContextResource
 
 			List<Integer> years = context.selectDistinct(DSL.year(MEASUREMENTS.CREATED)).from(MEASUREMENTS).fetchInto(Integer.class);
 
+			int month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
+
 			for (Integer year : years)
 			{
-				ZonedDateTime end = ZonedDateTime.now(ZoneOffset.UTC).withYear(year);
-				ZonedDateTime start = end.minusDays(7);
-
-				Condition condition = AGGREGATED.DATE.ge(Date.valueOf(start.toLocalDate())).and(AGGREGATED.DATE.le(Date.valueOf(end.toLocalDate())));
+				Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 				List<Aggregated> yearData = context.selectFrom(AGGREGATED)
 													 .where(condition)
@@ -63,10 +62,9 @@ public class WeekStatsResource extends ContextResource
 		{
 			DSLContext context = Database.getContext(conn);
 
-			ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-			ZonedDateTime start = now.minusDays(7);
-
-			Condition condition = AGGREGATED.DATE.ge(Date.valueOf(start.toLocalDate())).and(AGGREGATED.DATE.le(Date.valueOf(now.toLocalDate())));
+			int month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
+			int year = ZonedDateTime.now(ZoneOffset.UTC).getYear();
+			Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 			AggregatedStats result = new AggregatedStats();
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));

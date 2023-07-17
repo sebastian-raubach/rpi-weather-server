@@ -3,7 +3,7 @@ package uk.co.raubach.weatherstation.resource;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class WeeklyStats
+public class AggregatedStats
 {
 	private Day highestTemp;
 	private Day lowestTemp;
@@ -17,7 +17,7 @@ public class WeeklyStats
 		return highestTemp;
 	}
 
-	public WeeklyStats setHighestTemp(Day highestTemp)
+	public AggregatedStats setHighestTemp(Day highestTemp)
 	{
 		this.highestTemp = highestTemp;
 		return this;
@@ -28,7 +28,7 @@ public class WeeklyStats
 		return lowestTemp;
 	}
 
-	public WeeklyStats setLowestTemp(Day lowestTemp)
+	public AggregatedStats setLowestTemp(Day lowestTemp)
 	{
 		this.lowestTemp = lowestTemp;
 		return this;
@@ -39,7 +39,7 @@ public class WeeklyStats
 		return mostRain;
 	}
 
-	public WeeklyStats setMostRain(Day mostRain)
+	public AggregatedStats setMostRain(Day mostRain)
 	{
 		this.mostRain = mostRain;
 		return this;
@@ -50,7 +50,7 @@ public class WeeklyStats
 		return mostWind;
 	}
 
-	public WeeklyStats setMostWind(Day mostWind)
+	public AggregatedStats setMostWind(Day mostWind)
 	{
 		this.mostWind = mostWind;
 		return this;
@@ -61,7 +61,7 @@ public class WeeklyStats
 		return avgTemp;
 	}
 
-	public WeeklyStats setAvgTemp(BigDecimal avgTemp)
+	public AggregatedStats setAvgTemp(BigDecimal avgTemp)
 	{
 		this.avgTemp = avgTemp;
 		return this;
@@ -72,7 +72,7 @@ public class WeeklyStats
 		return totalRain;
 	}
 
-	public WeeklyStats setTotalRain(BigDecimal totalRain)
+	public AggregatedStats setTotalRain(BigDecimal totalRain)
 	{
 		this.totalRain = totalRain;
 		return this;
