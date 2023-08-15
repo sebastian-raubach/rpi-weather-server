@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.*;
 import org.jooq.*;
 import org.jooq.impl.UpdatableRecordImpl;
 import org.jooq.tools.StringUtils;
-import uk.co.raubach.weatherstation.resource.MeasurementPojo;
+import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
 @jakarta.ws.rs.Path("data")
 public class DataResource extends ContextResource
@@ -70,6 +70,40 @@ public class DataResource extends ContextResource
 		return new Timestamp(d.getTime());
 	}
 
+	@DELETE
+	@Path("/rainfall")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteRainfallDataForTimeframe(RainfallDeleteRequest request)
+			throws SQLException
+	{
+		if (request == null)
+			return Response.status(Response.Status.BAD_REQUEST).build();
+
+		if (!Objects.equals(request.getUuid(), PropertyWatcher.get("client.uuid")))
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		else
+		{
+			Timestamp start = getDate(request.getStart());
+			Timestamp end = getDate(request.getEnd());
+
+			if (start == null || end == null)
+				return Response.status(Response.Status.BAD_REQUEST).build();
+
+			try (Connection conn = Database.getDirectConnection())
+			{
+				DSLContext context = Database.getContext(conn);
+
+				context.update(MEASUREMENTS).set(MEASUREMENTS.RAINFALL, BigDecimal.valueOf(0))
+					   .where(MEASUREMENTS.CREATED.ge(start))
+					   .and(MEASUREMENTS.CREATED.le(end))
+					   .execute();
+
+				return Response.ok().build();
+			}
+		}
+	}
+
 	@GET
 	@Path("/forecast")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -97,7 +131,7 @@ public class DataResource extends ContextResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString)
-		throws IOException, SQLException
+			throws IOException, SQLException
 	{
 		Timestamp start = getDate(startString);
 		Timestamp end = getDate(endString);
@@ -164,7 +198,8 @@ public class DataResource extends ContextResource
 			});
 		}
 
-		if (windFactor != null && windFactor.doubleValue() != 1) {
+		if (windFactor != null && windFactor.doubleValue() != 1)
+		{
 			result.forEach(r -> {
 				BigDecimal wind = r.getWindSpeed();
 				if (wind != null)
@@ -226,7 +261,7 @@ public class DataResource extends ContextResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response postData(MeasurementPojo[] measurements, @QueryParam("uuid") String uuid)
-		throws IOException, SQLException
+			throws IOException, SQLException
 	{
 		if (!Objects.equals(uuid, PropertyWatcher.get("client.uuid")))
 			return Response.status(Response.Status.UNAUTHORIZED).build();
