@@ -24,7 +24,7 @@ public class MonthStatsResource extends ContextResource
 	@Path("/measurements")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDataJson()
+	public Response getDataJson(@QueryParam("month") Integer month)
 			throws SQLException
 	{
 		Map<Integer, List<Aggregated>> result = new HashMap<>();
@@ -35,7 +35,8 @@ public class MonthStatsResource extends ContextResource
 
 			List<Integer> years = context.selectDistinct(DSL.year(MEASUREMENTS.CREATED)).from(MEASUREMENTS).fetchInto(Integer.class);
 
-			int month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
+			if (month == null)
+				month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
 
 			for (Integer year : years)
 			{
@@ -55,15 +56,17 @@ public class MonthStatsResource extends ContextResource
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getWeekly()
+	public Response getMonthly(@QueryParam("year") Integer year, @QueryParam("month") Integer month)
 			throws IndexOutOfBoundsException, SQLException
 	{
 		try (Connection conn = Database.getDirectConnection())
 		{
 			DSLContext context = Database.getContext(conn);
 
-			int month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
-			int year = ZonedDateTime.now(ZoneOffset.UTC).getYear();
+			if (month == null)
+				month = ZonedDateTime.now(ZoneOffset.UTC).getMonthValue();
+			if (year == null)
+				year = ZonedDateTime.now(ZoneOffset.UTC).getYear();
 			Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 			AggregatedStats result = new AggregatedStats();
