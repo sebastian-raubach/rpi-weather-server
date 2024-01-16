@@ -158,7 +158,7 @@ public class DataResource extends ContextResource
 	public static void calculateHeatIndex(List<ExtendedMeasurement> result)
 	{
 		final double c1 = -8.784_694_755_56;
-		final double c2 = 0.988_622_465;
+		final double c2 = 1.611_394_11;
 		final double c3 = 2.338_548_838_89;
 		final double c4 = -0.146_116_05;
 		final double c5 = -0.012_308_094;
@@ -174,7 +174,8 @@ public class DataResource extends ContextResource
 			double tt = Math.pow(t, 2);
 			double rr = Math.pow(r, 2);
 
-			double d = c1 + c2 * t
+			double d = c1
+					+ c2 * t
 					+ c3 * r
 					+ c4 * t * r
 					+ c5 * tt
