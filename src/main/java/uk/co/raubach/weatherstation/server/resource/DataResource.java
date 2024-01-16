@@ -170,7 +170,7 @@ public class DataResource extends ContextResource
 		result.forEach(rec -> {
 			double t = rec.getAmbientTemp().doubleValue();
 			double r = rec.getHumidity().doubleValue();
-			double w = rec.getWindAverage().doubleValue();
+			double w = rec.getWindSpeed().doubleValue();
 
 			if (t >= 20)
 			{
@@ -192,7 +192,7 @@ public class DataResource extends ContextResource
 
 				rec.setHeatIndex(dec);
 			} else if (t <= 10) {
-				double d = 13.12  + 0.6215 * t + (0.3965 * t - 11.37) * Math.pow(w, 0.16);
+				double d = 13.12 + 0.6215 * t + (0.3965 * t - 11.37) * Math.pow(w, 0.16);
 
 				BigDecimal dec = new BigDecimal(d, MathContext.DECIMAL64);
 				dec = dec.setScale(10, RoundingMode.HALF_UP);
