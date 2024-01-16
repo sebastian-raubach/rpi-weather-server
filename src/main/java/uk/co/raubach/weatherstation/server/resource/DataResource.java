@@ -149,13 +149,13 @@ public class DataResource extends ContextResource
 
 			adjustWind(result);
 			adjustTemp(result);
-			calculateHeatIndex(result);
+			calculateFeelsLike(result);
 
 			return Response.ok(result).build();
 		}
 	}
 
-	public static void calculateHeatIndex(List<ExtendedMeasurement> result)
+	public static void calculateFeelsLike(List<ExtendedMeasurement> result)
 	{
 		final double c1 = -8.784_694_755_56;
 		final double c2 = 1.611_394_11;
@@ -170,24 +170,37 @@ public class DataResource extends ContextResource
 		result.forEach(rec -> {
 			double t = rec.getAmbientTemp().doubleValue();
 			double r = rec.getHumidity().doubleValue();
+			double w = rec.getWindAverage().doubleValue();
 
-			double tt = Math.pow(t, 2);
-			double rr = Math.pow(r, 2);
+			if (t >= 20)
+			{
+				double tt = Math.pow(t, 2);
+				double rr = Math.pow(r, 2);
 
-			double d = c1
-					+ c2 * t
-					+ c3 * r
-					+ c4 * t * r
-					+ c5 * tt
-					+ c6 * rr
-					+ c7 * tt * r
-					+ c8 * t * rr
-					+ c9 * tt * rr;
+				double d = c1
+						+ c2 * t
+						+ c3 * r
+						+ c4 * t * r
+						+ c5 * tt
+						+ c6 * rr
+						+ c7 * tt * r
+						+ c8 * t * rr
+						+ c9 * tt * rr;
 
-			BigDecimal dec = new BigDecimal(d, MathContext.DECIMAL64);
-			dec = dec.setScale(10, RoundingMode.HALF_UP);
+				BigDecimal dec = new BigDecimal(d, MathContext.DECIMAL64);
+				dec = dec.setScale(10, RoundingMode.HALF_UP);
 
-			rec.setHeatIndex(dec);
+				rec.setHeatIndex(dec);
+			} else if (t <= 10) {
+				double d = 13.12  + 0.6215 * t + (0.3965 * t - 11.37) * Math.pow(w, 0.16);
+
+				BigDecimal dec = new BigDecimal(d, MathContext.DECIMAL64);
+				dec = dec.setScale(10, RoundingMode.HALF_UP);
+
+				rec.setHeatIndex(dec);
+			} else {
+				rec.setHeatIndex(rec.getAmbientTemp());
+			}
 		});
 	}
 
