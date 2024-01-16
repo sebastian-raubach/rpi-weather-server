@@ -7,12 +7,11 @@ import org.jooq.impl.UpdatableRecordImpl;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
 import uk.co.raubach.weatherstation.server.util.*;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.math.*;
 import java.sql.*;
 import java.time.*;
 import java.util.Date;
@@ -146,16 +145,52 @@ public class DataResource extends ContextResource
 			if (end != null)
 				step.where(MEASUREMENTS.CREATED.le(end));
 
-			List<Measurements> result = step.fetchInto(Measurements.class);
+			List<ExtendedMeasurement> result = step.fetchInto(ExtendedMeasurement.class);
 
 			adjustWind(result);
 			adjustTemp(result);
+			calculateHeatIndex(result);
 
 			return Response.ok(result).build();
 		}
 	}
 
-	public static void adjustTemp(List<Measurements> result)
+	public static void calculateHeatIndex(List<ExtendedMeasurement> result)
+	{
+		final double c1 = -8.784_694_755_56;
+		final double c2 = 0.988_622_465;
+		final double c3 = 2.338_548_838_89;
+		final double c4 = -0.146_116_05;
+		final double c5 = -0.012_308_094;
+		final double c6 = -0.016_424_827_7778;
+		final double c7 = 2.211_732 * Math.pow(10, -3);
+		final double c8 = 7.2546 * Math.pow(10, -4);
+		final double c9 = -3.582 * Math.pow(10, -6);
+
+		result.forEach(rec -> {
+			double t = rec.getAmbientTemp().doubleValue();
+			double r = rec.getHumidity().doubleValue();
+
+			double tt = Math.pow(t, 2);
+			double rr = Math.pow(r, 2);
+
+			double d = c1 + c2 * t
+					+ c3 * r
+					+ c4 * t * r
+					+ c5 * tt
+					+ c6 * rr
+					+ c7 * tt * r
+					+ c8 * t * rr
+					+ c9 * tt * rr;
+
+			BigDecimal dec = new BigDecimal(d, MathContext.DECIMAL64);
+			dec = dec.setScale(10, RoundingMode.HALF_UP);
+
+			rec.setHeatIndex(dec);
+		});
+	}
+
+	public static void adjustTemp(List<ExtendedMeasurement> result)
 	{
 		if (tempOffset != null && tempOffset.doubleValue() != 0)
 		{
@@ -178,7 +213,7 @@ public class DataResource extends ContextResource
 		}
 	}
 
-	public static void adjustWind(List<Measurements> result)
+	public static void adjustWind(List<ExtendedMeasurement> result)
 	{
 		if (windOffset != null && windOffset.doubleValue() != 0)
 		{
