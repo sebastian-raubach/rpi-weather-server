@@ -23,7 +23,9 @@ compileJava.options.encoding = 'UTF-8'
 group 'uk.co.raubach.weatherstation'
 version '1.0.0'
 
-sourceCompatibility = 11
+java {
+    sourceCompatibility = 21
+}
 
 repositories {
     jcenter()
@@ -31,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'lib', include: ['*.jar'])
+    implementation fileTree(dir: 'lib', include: ['*.jar'])
 
     implementation 'commons-io:commons-io:2.11.0'
 
