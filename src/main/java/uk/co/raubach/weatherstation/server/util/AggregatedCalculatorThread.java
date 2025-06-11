@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.logging.Logger;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.AGGREGATED;
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.AggregatedYearMonth.AGGREGATED_YEAR_MONTH;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
 public class AggregatedCalculatorThread implements Runnable
@@ -20,13 +21,15 @@ public class AggregatedCalculatorThread implements Runnable
 		try
 		{
 			windFactor = Double.parseDouble(PropertyWatcher.get("wind.strength.multiplier"));
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 		}
 		try
 		{
 			tempOffset = Double.parseDouble(PropertyWatcher.get("temperature.offset"));
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 		}
 
@@ -80,7 +83,25 @@ public class AggregatedCalculatorThread implements Runnable
 								  ).from(MEASUREMENTS)
 								  .groupBy(date))
 				   .execute();
-		} catch (SQLException e)
+
+			context.deleteFrom(AGGREGATED_YEAR_MONTH).execute();
+			context.insertInto(AGGREGATED_YEAR_MONTH)
+				   .select(context.select(
+										  DSL.avg(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("avg_ambient_temp"),
+										  DSL.avg(MEASUREMENTS.GROUND_TEMP.add(tempOffset)).as("avg_ground_temp"),
+										  DSL.avg(MEASUREMENTS.LUX).as("avg_lux"),
+										  DSL.avg(MEASUREMENTS.PRESSURE).as("avg_pressure"),
+										  DSL.avg(MEASUREMENTS.HUMIDITY).as("avg_humidity"),
+										  DSL.avg(MEASUREMENTS.WIND_SPEED.times(windFactor)).as("avg_wind_speed"),
+										  DSL.avg(MEASUREMENTS.WIND_GUST.times(windFactor)).as("avg_wind_gust"),
+										  DSL.sum(MEASUREMENTS.RAINFALL).as("sum_rainfall"),
+										  DSL.year(MEASUREMENTS.CREATED),
+										  DSL.month(MEASUREMENTS.CREATED)
+								  ).from(MEASUREMENTS)
+								  .groupBy(DSL.year(MEASUREMENTS.CREATED), DSL.month(MEASUREMENTS.CREATED)))
+				   .execute();
+		}
+		catch (SQLException e)
 		{
 			e.printStackTrace();
 			Logger.getLogger("").severe(e.getMessage());

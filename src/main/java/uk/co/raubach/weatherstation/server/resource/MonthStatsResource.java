@@ -6,20 +6,40 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 import uk.co.raubach.weatherstation.resource.AggregatedStats;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Aggregated;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.*;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.AGGREGATED;
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.AggregatedYearMonth.AGGREGATED_YEAR_MONTH;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
 @Path("stats/monthly")
 public class MonthStatsResource extends ContextResource
 {
+	@GET
+	@Path("/{month:\\d+}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMonthStats(@PathParam("month") Integer month)
+			throws SQLException
+	{
+		if (month == null)
+			return Response.status(Response.Status.BAD_REQUEST).build();
+
+		try (Connection conn = Database.getDirectConnection())
+		{
+			DSLContext context = Database.getContext(conn);
+
+			return Response.ok(context.selectFrom(AGGREGATED_YEAR_MONTH)
+									  .where(AGGREGATED_YEAR_MONTH.MONTH.eq(month.shortValue()))
+									  .fetchInto(AggregatedYearMonth.class)).build();
+		}
+	}
+
 	@GET
 	@Path("/measurements")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -43,8 +63,8 @@ public class MonthStatsResource extends ContextResource
 				Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 				List<Aggregated> yearData = context.selectFrom(AGGREGATED)
-													 .where(condition)
-													 .fetchInto(Aggregated.class);
+												   .where(condition)
+												   .fetchInto(Aggregated.class);
 
 				result.put(year, yearData);
 			}
