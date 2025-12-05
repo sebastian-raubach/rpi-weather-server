@@ -22,6 +22,8 @@ public class Aggregated implements Serializable {
     private BigDecimal minGroundTemp;
     private BigDecimal minPiTemp;
     private BigDecimal minLux;
+    private BigDecimal minLoftHumidity;
+    private BigDecimal minLoftTemp;
     private BigDecimal minPressure;
     private BigDecimal minHumidity;
     private BigDecimal minWindAverage;
@@ -31,6 +33,8 @@ public class Aggregated implements Serializable {
     private BigDecimal maxGroundTemp;
     private BigDecimal maxPiTemp;
     private BigDecimal maxLux;
+    private BigDecimal maxLoftHumidity;
+    private BigDecimal maxLoftTemp;
     private BigDecimal maxPressure;
     private BigDecimal maxHumidity;
     private BigDecimal maxWindAverage;
@@ -40,6 +44,8 @@ public class Aggregated implements Serializable {
     private BigDecimal avgGroundTemp;
     private BigDecimal avgPiTemp;
     private BigDecimal avgLux;
+    private BigDecimal avgLoftHumidity;
+    private BigDecimal avgLoftTemp;
     private BigDecimal avgPressure;
     private BigDecimal avgHumidity;
     private BigDecimal avgWindAverage;
@@ -49,6 +55,8 @@ public class Aggregated implements Serializable {
     private BigDecimal stdGroundTemp;
     private BigDecimal stdPiTemp;
     private BigDecimal stdLux;
+    private BigDecimal stdLoftHumidity;
+    private BigDecimal stdLoftTemp;
     private BigDecimal stdPressure;
     private BigDecimal stdHumidity;
     private BigDecimal stdWindAverage;
@@ -64,6 +72,8 @@ public class Aggregated implements Serializable {
         this.minGroundTemp = value.minGroundTemp;
         this.minPiTemp = value.minPiTemp;
         this.minLux = value.minLux;
+        this.minLoftHumidity = value.minLoftHumidity;
+        this.minLoftTemp = value.minLoftTemp;
         this.minPressure = value.minPressure;
         this.minHumidity = value.minHumidity;
         this.minWindAverage = value.minWindAverage;
@@ -73,6 +83,8 @@ public class Aggregated implements Serializable {
         this.maxGroundTemp = value.maxGroundTemp;
         this.maxPiTemp = value.maxPiTemp;
         this.maxLux = value.maxLux;
+        this.maxLoftHumidity = value.maxLoftHumidity;
+        this.maxLoftTemp = value.maxLoftTemp;
         this.maxPressure = value.maxPressure;
         this.maxHumidity = value.maxHumidity;
         this.maxWindAverage = value.maxWindAverage;
@@ -82,6 +94,8 @@ public class Aggregated implements Serializable {
         this.avgGroundTemp = value.avgGroundTemp;
         this.avgPiTemp = value.avgPiTemp;
         this.avgLux = value.avgLux;
+        this.avgLoftHumidity = value.avgLoftHumidity;
+        this.avgLoftTemp = value.avgLoftTemp;
         this.avgPressure = value.avgPressure;
         this.avgHumidity = value.avgHumidity;
         this.avgWindAverage = value.avgWindAverage;
@@ -91,6 +105,8 @@ public class Aggregated implements Serializable {
         this.stdGroundTemp = value.stdGroundTemp;
         this.stdPiTemp = value.stdPiTemp;
         this.stdLux = value.stdLux;
+        this.stdLoftHumidity = value.stdLoftHumidity;
+        this.stdLoftTemp = value.stdLoftTemp;
         this.stdPressure = value.stdPressure;
         this.stdHumidity = value.stdHumidity;
         this.stdWindAverage = value.stdWindAverage;
@@ -105,6 +121,8 @@ public class Aggregated implements Serializable {
         BigDecimal minGroundTemp,
         BigDecimal minPiTemp,
         BigDecimal minLux,
+        BigDecimal minLoftHumidity,
+        BigDecimal minLoftTemp,
         BigDecimal minPressure,
         BigDecimal minHumidity,
         BigDecimal minWindAverage,
@@ -114,6 +132,8 @@ public class Aggregated implements Serializable {
         BigDecimal maxGroundTemp,
         BigDecimal maxPiTemp,
         BigDecimal maxLux,
+        BigDecimal maxLoftHumidity,
+        BigDecimal maxLoftTemp,
         BigDecimal maxPressure,
         BigDecimal maxHumidity,
         BigDecimal maxWindAverage,
@@ -123,6 +143,8 @@ public class Aggregated implements Serializable {
         BigDecimal avgGroundTemp,
         BigDecimal avgPiTemp,
         BigDecimal avgLux,
+        BigDecimal avgLoftHumidity,
+        BigDecimal avgLoftTemp,
         BigDecimal avgPressure,
         BigDecimal avgHumidity,
         BigDecimal avgWindAverage,
@@ -132,6 +154,8 @@ public class Aggregated implements Serializable {
         BigDecimal stdGroundTemp,
         BigDecimal stdPiTemp,
         BigDecimal stdLux,
+        BigDecimal stdLoftHumidity,
+        BigDecimal stdLoftTemp,
         BigDecimal stdPressure,
         BigDecimal stdHumidity,
         BigDecimal stdWindAverage,
@@ -144,6 +168,8 @@ public class Aggregated implements Serializable {
         this.minGroundTemp = minGroundTemp;
         this.minPiTemp = minPiTemp;
         this.minLux = minLux;
+        this.minLoftHumidity = minLoftHumidity;
+        this.minLoftTemp = minLoftTemp;
         this.minPressure = minPressure;
         this.minHumidity = minHumidity;
         this.minWindAverage = minWindAverage;
@@ -153,6 +179,8 @@ public class Aggregated implements Serializable {
         this.maxGroundTemp = maxGroundTemp;
         this.maxPiTemp = maxPiTemp;
         this.maxLux = maxLux;
+        this.maxLoftHumidity = maxLoftHumidity;
+        this.maxLoftTemp = maxLoftTemp;
         this.maxPressure = maxPressure;
         this.maxHumidity = maxHumidity;
         this.maxWindAverage = maxWindAverage;
@@ -162,6 +190,8 @@ public class Aggregated implements Serializable {
         this.avgGroundTemp = avgGroundTemp;
         this.avgPiTemp = avgPiTemp;
         this.avgLux = avgLux;
+        this.avgLoftHumidity = avgLoftHumidity;
+        this.avgLoftTemp = avgLoftTemp;
         this.avgPressure = avgPressure;
         this.avgHumidity = avgHumidity;
         this.avgWindAverage = avgWindAverage;
@@ -171,6 +201,8 @@ public class Aggregated implements Serializable {
         this.stdGroundTemp = stdGroundTemp;
         this.stdPiTemp = stdPiTemp;
         this.stdLux = stdLux;
+        this.stdLoftHumidity = stdLoftHumidity;
+        this.stdLoftTemp = stdLoftTemp;
         this.stdPressure = stdPressure;
         this.stdHumidity = stdHumidity;
         this.stdWindAverage = stdWindAverage;
@@ -234,6 +266,34 @@ public class Aggregated implements Serializable {
      */
     public void setMinLux(BigDecimal minLux) {
         this.minLux = minLux;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.min_loft_humidity</code>.
+     */
+    public BigDecimal getMinLoftHumidity() {
+        return this.minLoftHumidity;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.min_loft_humidity</code>.
+     */
+    public void setMinLoftHumidity(BigDecimal minLoftHumidity) {
+        this.minLoftHumidity = minLoftHumidity;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.min_loft_temp</code>.
+     */
+    public BigDecimal getMinLoftTemp() {
+        return this.minLoftTemp;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.min_loft_temp</code>.
+     */
+    public void setMinLoftTemp(BigDecimal minLoftTemp) {
+        this.minLoftTemp = minLoftTemp;
     }
 
     /**
@@ -363,6 +423,34 @@ public class Aggregated implements Serializable {
     }
 
     /**
+     * Getter for <code>weatherstation_db.aggregated.max_loft_humidity</code>.
+     */
+    public BigDecimal getMaxLoftHumidity() {
+        return this.maxLoftHumidity;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.max_loft_humidity</code>.
+     */
+    public void setMaxLoftHumidity(BigDecimal maxLoftHumidity) {
+        this.maxLoftHumidity = maxLoftHumidity;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.max_loft_temp</code>.
+     */
+    public BigDecimal getMaxLoftTemp() {
+        return this.maxLoftTemp;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.max_loft_temp</code>.
+     */
+    public void setMaxLoftTemp(BigDecimal maxLoftTemp) {
+        this.maxLoftTemp = maxLoftTemp;
+    }
+
+    /**
      * Getter for <code>weatherstation_db.aggregated.max_pressure</code>.
      */
     public BigDecimal getMaxPressure() {
@@ -486,6 +574,34 @@ public class Aggregated implements Serializable {
      */
     public void setAvgLux(BigDecimal avgLux) {
         this.avgLux = avgLux;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.avg_loft_humidity</code>.
+     */
+    public BigDecimal getAvgLoftHumidity() {
+        return this.avgLoftHumidity;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.avg_loft_humidity</code>.
+     */
+    public void setAvgLoftHumidity(BigDecimal avgLoftHumidity) {
+        this.avgLoftHumidity = avgLoftHumidity;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.avg_loft_temp</code>.
+     */
+    public BigDecimal getAvgLoftTemp() {
+        return this.avgLoftTemp;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.avg_loft_temp</code>.
+     */
+    public void setAvgLoftTemp(BigDecimal avgLoftTemp) {
+        this.avgLoftTemp = avgLoftTemp;
     }
 
     /**
@@ -615,6 +731,34 @@ public class Aggregated implements Serializable {
     }
 
     /**
+     * Getter for <code>weatherstation_db.aggregated.std_loft_humidity</code>.
+     */
+    public BigDecimal getStdLoftHumidity() {
+        return this.stdLoftHumidity;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.std_loft_humidity</code>.
+     */
+    public void setStdLoftHumidity(BigDecimal stdLoftHumidity) {
+        this.stdLoftHumidity = stdLoftHumidity;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.aggregated.std_loft_temp</code>.
+     */
+    public BigDecimal getStdLoftTemp() {
+        return this.stdLoftTemp;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.aggregated.std_loft_temp</code>.
+     */
+    public void setStdLoftTemp(BigDecimal stdLoftTemp) {
+        this.stdLoftTemp = stdLoftTemp;
+    }
+
+    /**
      * Getter for <code>weatherstation_db.aggregated.std_pressure</code>.
      */
     public BigDecimal getStdPressure() {
@@ -720,6 +864,8 @@ public class Aggregated implements Serializable {
         sb.append(", ").append(minGroundTemp);
         sb.append(", ").append(minPiTemp);
         sb.append(", ").append(minLux);
+        sb.append(", ").append(minLoftHumidity);
+        sb.append(", ").append(minLoftTemp);
         sb.append(", ").append(minPressure);
         sb.append(", ").append(minHumidity);
         sb.append(", ").append(minWindAverage);
@@ -729,6 +875,8 @@ public class Aggregated implements Serializable {
         sb.append(", ").append(maxGroundTemp);
         sb.append(", ").append(maxPiTemp);
         sb.append(", ").append(maxLux);
+        sb.append(", ").append(maxLoftHumidity);
+        sb.append(", ").append(maxLoftTemp);
         sb.append(", ").append(maxPressure);
         sb.append(", ").append(maxHumidity);
         sb.append(", ").append(maxWindAverage);
@@ -738,6 +886,8 @@ public class Aggregated implements Serializable {
         sb.append(", ").append(avgGroundTemp);
         sb.append(", ").append(avgPiTemp);
         sb.append(", ").append(avgLux);
+        sb.append(", ").append(avgLoftHumidity);
+        sb.append(", ").append(avgLoftTemp);
         sb.append(", ").append(avgPressure);
         sb.append(", ").append(avgHumidity);
         sb.append(", ").append(avgWindAverage);
@@ -747,6 +897,8 @@ public class Aggregated implements Serializable {
         sb.append(", ").append(stdGroundTemp);
         sb.append(", ").append(stdPiTemp);
         sb.append(", ").append(stdLux);
+        sb.append(", ").append(stdLoftHumidity);
+        sb.append(", ").append(stdLoftTemp);
         sb.append(", ").append(stdPressure);
         sb.append(", ").append(stdHumidity);
         sb.append(", ").append(stdWindAverage);

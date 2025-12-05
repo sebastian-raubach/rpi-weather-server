@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import org.jooq.Field;
 import org.jooq.Identity;
 import org.jooq.Name;
-import org.jooq.Row13;
+import org.jooq.Row15;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -96,6 +96,16 @@ public class Measurements extends TableImpl<MeasurementsRecord> {
      * The column <code>weatherstation_db.measurements.pi_temp</code>.
      */
     public final TableField<MeasurementsRecord, BigDecimal> PI_TEMP = createField(DSL.name("pi_temp"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.measurements.loft_humidity</code>.
+     */
+    public final TableField<MeasurementsRecord, BigDecimal> LOFT_HUMIDITY = createField(DSL.name("loft_humidity"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.measurements.loft_temp</code>.
+     */
+    public final TableField<MeasurementsRecord, BigDecimal> LOFT_TEMP = createField(DSL.name("loft_temp"), SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.measurements.lux</code>.
@@ -185,12 +195,12 @@ public class Measurements extends TableImpl<MeasurementsRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row13 type methods
+    // Row15 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, Boolean, Timestamp> fieldsRow() {
-        return (Row13) super.fieldsRow();
+    public Row15<Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, Boolean, Timestamp> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
     // @formatter:on
 }

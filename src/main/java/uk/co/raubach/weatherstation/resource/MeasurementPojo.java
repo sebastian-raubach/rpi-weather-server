@@ -14,6 +14,8 @@ public class MeasurementPojo
 	private BigDecimal rainfall;
 	private BigDecimal piTemp;
 	private BigDecimal lux;
+	private BigDecimal loftTemp;
+	private BigDecimal loftHumidity;
 	private String     created;
 
 	public BigDecimal getAmbientTemp()
@@ -125,5 +127,27 @@ public class MeasurementPojo
 	public void setCreated(String created)
 	{
 		this.created = created;
+	}
+
+	public BigDecimal getLoftTemp()
+	{
+		return loftTemp;
+	}
+
+	public MeasurementPojo setLoftTemp(BigDecimal loftTemp)
+	{
+		this.loftTemp = loftTemp;
+		return this;
+	}
+
+	public BigDecimal getLoftHumidity()
+	{
+		return loftHumidity;
+	}
+
+	public MeasurementPojo setLoftHumidity(BigDecimal loftHumidity)
+	{
+		this.loftHumidity = loftHumidity;
+		return this;
 	}
 }

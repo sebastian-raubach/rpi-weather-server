@@ -65,9 +65,11 @@ public class DailyStats
 	{
 		private BigDecimal ambientTemp;
 		private BigDecimal groundTemp;
+		private BigDecimal loftTemp;
 		private BigDecimal piTemp;
 		private BigDecimal pressure;
 		private BigDecimal humidity;
+		private BigDecimal loftHumidity;
 		private BigDecimal windAverage;
 		private BigDecimal windSpeed;
 		private BigDecimal windGust;
@@ -177,6 +179,28 @@ public class DailyStats
 		public TypeStats setLux(BigDecimal lux)
 		{
 			this.lux = lux;
+			return this;
+		}
+
+		public BigDecimal getLoftTemp()
+		{
+			return loftTemp;
+		}
+
+		public TypeStats setLoftTemp(BigDecimal loftTemp)
+		{
+			this.loftTemp = loftTemp;
+			return this;
+		}
+
+		public BigDecimal getLoftHumidity()
+		{
+			return loftHumidity;
+		}
+
+		public TypeStats setLoftHumidity(BigDecimal loftHumidity)
+		{
+			this.loftHumidity = loftHumidity;
 			return this;
 		}
 	}

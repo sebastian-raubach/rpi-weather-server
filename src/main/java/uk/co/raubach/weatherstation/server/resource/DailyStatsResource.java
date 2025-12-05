@@ -79,6 +79,8 @@ public class DailyStatsResource extends ContextResource
 											 min.setWindGust(r.getMinWindGust());
 											 min.setWindSpeed(r.getMinWindSpeed());
 											 min.setLux(r.getMinLux());
+											 min.setLoftTemp(r.getMinLoftTemp());
+											 min.setLoftHumidity(r.getMinLoftHumidity());
 											 DailyStats.TypeStats max = new DailyStats.TypeStats();
 											 max.setAmbientTemp(r.getMaxAmbientTemp());
 											 max.setGroundTemp(r.getMaxGroundTemp());
@@ -90,6 +92,8 @@ public class DailyStatsResource extends ContextResource
 											 max.setWindGust(r.getMaxWindGust());
 											 max.setWindSpeed(r.getMaxWindSpeed());
 											 max.setLux(r.getMaxLux());
+											 max.setLoftTemp(r.getMaxLoftTemp());
+											 max.setLoftHumidity(r.getMaxLoftHumidity());
 											 DailyStats.TypeStats avg = new DailyStats.TypeStats();
 											 avg.setAmbientTemp(r.getAvgAmbientTemp());
 											 avg.setGroundTemp(r.getAvgGroundTemp());
@@ -101,6 +105,8 @@ public class DailyStatsResource extends ContextResource
 											 avg.setWindGust(r.getAvgWindGust());
 											 avg.setWindSpeed(r.getAvgWindSpeed());
 											 avg.setLux(r.getAvgLux());
+											 avg.setLoftTemp(r.getAvgLoftTemp());
+											 avg.setLoftHumidity(r.getAvgLoftHumidity());
 											 DailyStats.TypeStats std = new DailyStats.TypeStats();
 											 std.setAmbientTemp(r.getStdAmbientTemp());
 											 std.setGroundTemp(r.getStdGroundTemp());
@@ -112,6 +118,8 @@ public class DailyStatsResource extends ContextResource
 											 std.setWindGust(r.getStdWindGust());
 											 std.setWindSpeed(r.getStdWindSpeed());
 											 std.setLux(r.getStdLux());
+											 std.setLoftTemp(r.getStdLoftTemp());
+											 std.setLoftHumidity(r.getStdLoftHumidity());
 
 											 result.setMin(min);
 											 result.setMax(max);

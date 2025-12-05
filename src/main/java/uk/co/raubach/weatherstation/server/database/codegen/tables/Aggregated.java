@@ -66,6 +66,16 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
     public final TableField<AggregatedRecord, BigDecimal> MIN_LUX = createField(DSL.name("min_lux"), SQLDataType.DECIMAL(8, 2), this, "");
 
     /**
+     * The column <code>weatherstation_db.aggregated.min_loft_humidity</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MIN_LOFT_HUMIDITY = createField(DSL.name("min_loft_humidity"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.min_loft_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MIN_LOFT_TEMP = createField(DSL.name("min_loft_temp"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
      * The column <code>weatherstation_db.aggregated.min_pressure</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> MIN_PRESSURE = createField(DSL.name("min_pressure"), SQLDataType.DECIMAL(6, 2), this, "");
@@ -109,6 +119,16 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
      * The column <code>weatherstation_db.aggregated.max_lux</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> MAX_LUX = createField(DSL.name("max_lux"), SQLDataType.DECIMAL(8, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.max_loft_humidity</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MAX_LOFT_HUMIDITY = createField(DSL.name("max_loft_humidity"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.max_loft_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> MAX_LOFT_TEMP = createField(DSL.name("max_loft_temp"), SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.aggregated.max_pressure</code>.
@@ -156,6 +176,16 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
     public final TableField<AggregatedRecord, BigDecimal> AVG_LUX = createField(DSL.name("avg_lux"), SQLDataType.DECIMAL(8, 2), this, "");
 
     /**
+     * The column <code>weatherstation_db.aggregated.avg_loft_humidity</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> AVG_LOFT_HUMIDITY = createField(DSL.name("avg_loft_humidity"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.avg_loft_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> AVG_LOFT_TEMP = createField(DSL.name("avg_loft_temp"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
      * The column <code>weatherstation_db.aggregated.avg_pressure</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> AVG_PRESSURE = createField(DSL.name("avg_pressure"), SQLDataType.DECIMAL(6, 2), this, "");
@@ -199,6 +229,16 @@ public class Aggregated extends TableImpl<AggregatedRecord> {
      * The column <code>weatherstation_db.aggregated.std_lux</code>.
      */
     public final TableField<AggregatedRecord, BigDecimal> STD_LUX = createField(DSL.name("std_lux"), SQLDataType.DECIMAL(8, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.std_loft_humidity</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> STD_LOFT_HUMIDITY = createField(DSL.name("std_loft_humidity"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column <code>weatherstation_db.aggregated.std_loft_temp</code>.
+     */
+    public final TableField<AggregatedRecord, BigDecimal> STD_LOFT_TEMP = createField(DSL.name("std_loft_temp"), SQLDataType.DECIMAL(6, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.aggregated.std_pressure</code>.

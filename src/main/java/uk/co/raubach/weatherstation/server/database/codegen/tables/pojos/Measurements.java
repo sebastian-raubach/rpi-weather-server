@@ -28,6 +28,8 @@ public class Measurements implements Serializable {
     private BigDecimal windGust;
     private BigDecimal rainfall;
     private BigDecimal piTemp;
+    private BigDecimal loftHumidity;
+    private BigDecimal loftTemp;
     private BigDecimal lux;
     private Boolean    uploadedWu;
     private Timestamp  created;
@@ -45,6 +47,8 @@ public class Measurements implements Serializable {
         this.windGust = value.windGust;
         this.rainfall = value.rainfall;
         this.piTemp = value.piTemp;
+        this.loftHumidity = value.loftHumidity;
+        this.loftTemp = value.loftTemp;
         this.lux = value.lux;
         this.uploadedWu = value.uploadedWu;
         this.created = value.created;
@@ -61,6 +65,8 @@ public class Measurements implements Serializable {
         BigDecimal windGust,
         BigDecimal rainfall,
         BigDecimal piTemp,
+        BigDecimal loftHumidity,
+        BigDecimal loftTemp,
         BigDecimal lux,
         Boolean    uploadedWu,
         Timestamp  created
@@ -75,6 +81,8 @@ public class Measurements implements Serializable {
         this.windGust = windGust;
         this.rainfall = rainfall;
         this.piTemp = piTemp;
+        this.loftHumidity = loftHumidity;
+        this.loftTemp = loftTemp;
         this.lux = lux;
         this.uploadedWu = uploadedWu;
         this.created = created;
@@ -221,6 +229,34 @@ public class Measurements implements Serializable {
     }
 
     /**
+     * Getter for <code>weatherstation_db.measurements.loft_humidity</code>.
+     */
+    public BigDecimal getLoftHumidity() {
+        return this.loftHumidity;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.measurements.loft_humidity</code>.
+     */
+    public void setLoftHumidity(BigDecimal loftHumidity) {
+        this.loftHumidity = loftHumidity;
+    }
+
+    /**
+     * Getter for <code>weatherstation_db.measurements.loft_temp</code>.
+     */
+    public BigDecimal getLoftTemp() {
+        return this.loftTemp;
+    }
+
+    /**
+     * Setter for <code>weatherstation_db.measurements.loft_temp</code>.
+     */
+    public void setLoftTemp(BigDecimal loftTemp) {
+        this.loftTemp = loftTemp;
+    }
+
+    /**
      * Getter for <code>weatherstation_db.measurements.lux</code>.
      */
     public BigDecimal getLux() {
@@ -276,6 +312,8 @@ public class Measurements implements Serializable {
         sb.append(", ").append(windGust);
         sb.append(", ").append(rainfall);
         sb.append(", ").append(piTemp);
+        sb.append(", ").append(loftHumidity);
+        sb.append(", ").append(loftTemp);
         sb.append(", ").append(lux);
         sb.append(", ").append(uploadedWu);
         sb.append(", ").append(created);
