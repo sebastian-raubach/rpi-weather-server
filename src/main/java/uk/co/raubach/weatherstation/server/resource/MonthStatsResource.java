@@ -1,6 +1,7 @@
 package uk.co.raubach.weatherstation.server.resource;
 
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
 import org.jooq.impl.DSL;
