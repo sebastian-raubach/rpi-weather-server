@@ -1,8 +1,10 @@
 package uk.co.raubach.weatherstation.server.util;
 
 import org.jooq.*;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.*;
 import uk.co.raubach.weatherstation.server.database.Database;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.records.AggregatedYearMonthRecord;
 
 import java.sql.*;
 import java.util.logging.Logger;
@@ -93,23 +95,29 @@ public class AggregatedCalculatorThread implements Runnable
 				   .execute();
 
 			context.deleteFrom(AGGREGATED_YEAR_MONTH).execute();
-			context.insertInto(AGGREGATED_YEAR_MONTH)
-				   .select(context.select(
-										  DSL.avg(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("avg_ambient_temp"),
-										  DSL.avg(MEASUREMENTS.GROUND_TEMP.add(tempOffset)).as("avg_ground_temp"),
-										  DSL.avg(MEASUREMENTS.LOFT_HUMIDITY).as("avg_loft_humidity"),
-										  DSL.avg(MEASUREMENTS.LOFT_TEMP).as("avg_loft_temp"),
-										  DSL.avg(MEASUREMENTS.LUX).as("avg_lux"),
-										  DSL.avg(MEASUREMENTS.PRESSURE).as("avg_pressure"),
-										  DSL.avg(MEASUREMENTS.HUMIDITY).as("avg_humidity"),
-										  DSL.avg(MEASUREMENTS.WIND_SPEED.times(windFactor)).as("avg_wind_speed"),
-										  DSL.avg(MEASUREMENTS.WIND_GUST.times(windFactor)).as("avg_wind_gust"),
-										  DSL.sum(MEASUREMENTS.RAINFALL).as("sum_rainfall"),
-										  DSL.year(MEASUREMENTS.CREATED),
-										  DSL.month(MEASUREMENTS.CREATED)
-								  ).from(MEASUREMENTS)
-								  .groupBy(DSL.year(MEASUREMENTS.CREATED), DSL.month(MEASUREMENTS.CREATED)))
-				   .execute();
+
+			Field<Integer> year = DSL.year(MEASUREMENTS.CREATED).as("year");
+			Field<Integer> month = DSL.month(MEASUREMENTS.CREATED).as("month");
+			InsertOnDuplicateStep<AggregatedYearMonthRecord> insert = context.insertInto(AGGREGATED_YEAR_MONTH)
+																			 .select(context.select(
+																									DSL.avg(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("avg_ambient_temp"),
+																									DSL.avg(MEASUREMENTS.GROUND_TEMP.add(tempOffset)).as("avg_ground_temp"),
+																									DSL.avg(MEASUREMENTS.LOFT_HUMIDITY).as("avg_loft_humidity"),
+																									DSL.avg(MEASUREMENTS.LOFT_TEMP).as("avg_loft_temp"),
+																									DSL.avg(MEASUREMENTS.LUX).as("avg_lux"),
+																									DSL.avg(MEASUREMENTS.PRESSURE).as("avg_pressure"),
+																									DSL.avg(MEASUREMENTS.HUMIDITY).as("avg_humidity"),
+																									DSL.avg(MEASUREMENTS.WIND_SPEED.times(windFactor)).as("avg_wind_speed"),
+																									DSL.avg(MEASUREMENTS.WIND_GUST.times(windFactor)).as("avg_wind_gust"),
+																									DSL.sum(MEASUREMENTS.RAINFALL).as("sum_rainfall"),
+																									year,
+																									month
+																							).from(MEASUREMENTS)
+																							.groupBy(year, month));
+
+			Logger.getLogger("").info("UPDATE AGGREGATED MONTH YEAR: " + insert.getSQL(ParamType.INLINED));
+
+			insert.execute();
 		}
 		catch (SQLException e)
 		{
