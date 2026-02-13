@@ -93,6 +93,10 @@ public class MonthStatsResource extends ContextResource
 			AggregatedStats result = new AggregatedStats();
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
+			result.setAvgHumidity(context.select(DSL.avg(AGGREGATED.AVG_HUMIDITY)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
+			result.setAvgLoftTemperature(context.select(DSL.avg(AGGREGATED.AVG_LOFT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
+			result.setAvgLux(context.select(DSL.avg(AGGREGATED.AVG_LUX)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
+			result.setAvgLoftHumidity(context.select(DSL.avg(AGGREGATED.AVG_LOFT_HUMIDITY)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setMostRain(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.SUM_RAINFALL.as("value"))
 									  .from(AGGREGATED)
 									  .where(condition)
