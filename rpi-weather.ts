@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-01-05 13:48:19.
+// Generated using typescript-generator version 3.2.1263 on 2026-02-26 14:31:19.
 
 export interface AggregatedStats {
     highestTemp: Day;
@@ -9,6 +9,10 @@ export interface AggregatedStats {
     mostWind: Day;
     avgTemp: number;
     totalRain: number;
+    avgLux: number;
+    avgHumidity: number;
+    avgLoftHumidity: number;
+    avgLoftTemperature: number;
 }
 
 export interface DailyStats {
@@ -52,6 +56,11 @@ export interface RainfallDeleteRequest {
     start: string;
     end: string;
     uuid: string;
+}
+
+export interface TidalInfo {
+    levels: LevelData[];
+    extremes: ExtremeData[];
 }
 
 export interface Aggregated extends Serializable {
@@ -106,6 +115,8 @@ export interface Aggregated extends Serializable {
 export interface AggregatedYearMonth extends Serializable {
     avgAmbientTemp: number;
     avgGroundTemp: number;
+    avgLoftHumidity: number;
+    avgLoftTemp: number;
     avgLux: number;
     avgPressure: number;
     avgHumidity: number;
@@ -167,5 +178,21 @@ export interface TypeStats {
     lux: number;
 }
 
+export interface LevelData {
+    sg: number;
+    time: Date;
+}
+
+export interface ExtremeData {
+    height: number;
+    time: Date;
+    type: Type;
+}
+
 export interface Serializable {
+}
+
+export const enum Type {
+    high = 'high',
+    low = 'low',
 }

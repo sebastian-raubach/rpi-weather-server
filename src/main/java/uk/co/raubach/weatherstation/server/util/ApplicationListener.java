@@ -27,8 +27,14 @@ public class ApplicationListener implements ServletContextListener
 		backgroundScheduler.scheduleAtFixedRate(new WUUploaderThread(), 1, 10, TimeUnit.MINUTES);
 		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 3, TimeUnit.HOURS);
 
-		if (!StringUtils.isEmpty(PropertyWatcher.get("latitude")) && !StringUtils.isEmpty(PropertyWatcher.get("longitude")) && !StringUtils.isEmpty("openweathermap.key"))
-			backgroundScheduler.scheduleAtFixedRate(new ForecastThread(), 0, 1, TimeUnit.HOURS);
+		if (!StringUtils.isEmpty(PropertyWatcher.get("latitude")) && !StringUtils.isEmpty(PropertyWatcher.get("longitude")))
+		{
+//			if (!StringUtils.isEmpty(PropertyWatcher.get("openweathermap.key")))
+				backgroundScheduler.scheduleAtFixedRate(new ForecastThread(), 0, 1, TimeUnit.HOURS);
+
+			if (!StringUtils.isEmpty(PropertyWatcher.get("stormglass.api.key")))
+				backgroundScheduler.scheduleAtFixedRate(new TidalTimesThread(), 0, 8, TimeUnit.HOURS);
+		}
 	}
 
 	@Override
