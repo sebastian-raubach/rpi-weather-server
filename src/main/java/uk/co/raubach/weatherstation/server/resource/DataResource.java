@@ -117,7 +117,6 @@ public class DataResource extends ContextResource
 		{
 			return Response.ok(ForecastThread.FORECAST.stream()
 													  .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
-													  .sorted((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()))
 													  .collect(Collectors.toList()))
 						   .build();
 		}

@@ -73,6 +73,8 @@ public class ForecastThread implements Runnable
 						});
 					}
 
+					measurements.sort((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()));
+
 					FORECAST = Collections.unmodifiableList(measurements);
 				}
 				else
@@ -142,6 +144,8 @@ public class ForecastThread implements Runnable
 						m.setCreated(new Timestamp((h.dt()/* + data.timezoneOffset()*/) * 1000));
 						measurements.add(m);
 					});
+
+					measurements.sort((a, b) -> (int) Math.signum(a.getCreated().getTime() - b.getCreated().getTime()));
 
 					FORECAST = Collections.unmodifiableList(measurements);
 				}
