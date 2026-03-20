@@ -3,6 +3,8 @@ package uk.co.raubach.weatherstation.server.util;
 import com.google.gson.*;
 
 import java.text.*;
+import java.time.*;
+import java.time.format.*;
 import java.util.Date;
 
 public class GsonUtil
@@ -10,9 +12,9 @@ public class GsonUtil
 	public static final String PATTERN_TIMESTAMP = "yyyy-MM-dd'T'HH:mm:ss.SSSXX";
 	public static final String PATTERN_DATE = "yyyy-MM-dd";
 
-	private static Gson             gson;
-	private static SimpleDateFormat sdf;
-	private static SimpleDateFormat sdfDate;
+	private static Gson              gson;
+	private static DateTimeFormatter sdf;
+	private static DateTimeFormatter  sdfDate;
 
 	public static synchronized Gson getInstance()
 	{
@@ -23,20 +25,20 @@ public class GsonUtil
 		return gson;
 	}
 
-	public static synchronized SimpleDateFormat getSDFInstance()
+	public static synchronized DateTimeFormatter getSDFInstance()
 	{
 		if (sdf == null)
 		{
-			sdf = new SimpleDateFormat(PATTERN_TIMESTAMP);
+			sdf = DateTimeFormatter.ofPattern(PATTERN_TIMESTAMP).withZone(ZoneId.systemDefault());
 		}
 		return sdf;
 	}
 
-	public static synchronized SimpleDateFormat getSDFInstanceDate()
+	public static synchronized DateTimeFormatter getSDFInstanceDate()
 	{
 		if (sdfDate == null)
 		{
-			sdfDate = new SimpleDateFormat(PATTERN_DATE);
+			sdfDate = DateTimeFormatter.ofPattern(PATTERN_DATE).withZone(ZoneId.systemDefault());
 		}
 		return sdfDate;
 	}
@@ -47,27 +49,27 @@ public class GsonUtil
 		gsonBuilder.registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, arg2) -> {
 			try
 			{
-				return getSDFInstance().parse(json.getAsString());
+				return new Date(OffsetDateTime.parse(json.getAsString(), getSDFInstance()).toInstant().toEpochMilli());
 			}
-			catch (ParseException e)
+			catch (DateTimeParseException e)
 			{
 				return null;
 			}
 		});
 		gsonBuilder.registerTypeAdapter(Date.class, (JsonSerializer<Date>) (src, typeOfSrc, context) -> src == null ? null : new JsonPrimitive(getSDFInstance()
-			.format(src)));
+			.format(src.toInstant())));
 		gsonBuilder.registerTypeAdapter(java.sql.Date.class, (JsonDeserializer<java.sql.Date>) (json, type, arg2) -> {
 			try
 			{
-				return new java.sql.Date(getSDFInstanceDate().parse(json.getAsString()).getTime());
+				return new java.sql.Date(OffsetDateTime.parse(json.getAsString(), getSDFInstanceDate()).toInstant().toEpochMilli());
 			}
-			catch (ParseException e)
+			catch (DateTimeParseException e)
 			{
 				return null;
 			}
 		});
 		gsonBuilder.registerTypeAdapter(java.sql.Date.class, (JsonSerializer<java.sql.Date>) (src, typeOfSrc, context) -> src == null ? null : new JsonPrimitive(getSDFInstanceDate()
-			.format(src)));
+			.format(src.toInstant())));
 		return gsonBuilder;
 	}
 }
