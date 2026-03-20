@@ -11,46 +11,16 @@ public class GsonUtil
 	public static final String PATTERN_DATE = "yyyy-MM-dd";
 
 	private static Gson             gson;
-	private static Gson             gsonExpose;
 	private static SimpleDateFormat sdf;
 	private static SimpleDateFormat sdfDate;
 
-	public static Gson getInstance()
+	public static synchronized Gson getInstance()
 	{
 		if (gson == null)
 		{
-			gson = getGsonBuilderInstance(false).create();
+			gson = getGsonBuilderInstance().create();
 		}
 		return gson;
-	}
-
-	public static Gson getExposeInstance()
-	{
-		if (gsonExpose == null)
-		{
-			gsonExpose = getGsonBuilderInstance(true).create();
-		}
-		return gsonExpose;
-	}
-
-	public static Gson getInstance(boolean onlyExpose)
-	{
-		if (!onlyExpose)
-		{
-			if (gson == null)
-			{
-				gson = getGsonBuilderInstance(false).create();
-			}
-			return gson;
-		}
-		else
-		{
-			if (gsonExpose == null)
-			{
-				gsonExpose = getGsonBuilderInstance(true).create();
-			}
-			return gsonExpose;
-		}
 	}
 
 	public static synchronized SimpleDateFormat getSDFInstance()
@@ -71,13 +41,9 @@ public class GsonUtil
 		return sdfDate;
 	}
 
-	private static GsonBuilder getGsonBuilderInstance(boolean onlyExpose)
+	private static GsonBuilder getGsonBuilderInstance()
 	{
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		if (onlyExpose)
-		{
-			gsonBuilder.excludeFieldsWithoutExposeAnnotation();
-		}
 		gsonBuilder.registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, arg2) -> {
 			try
 			{
@@ -103,19 +69,5 @@ public class GsonUtil
 		gsonBuilder.registerTypeAdapter(java.sql.Date.class, (JsonSerializer<java.sql.Date>) (src, typeOfSrc, context) -> src == null ? null : new JsonPrimitive(getSDFInstanceDate()
 			.format(src)));
 		return gsonBuilder;
-	}
-
-	public static <T> T fromJson(String json, Class<T> classOfT,
-								 boolean onlyExpose)
-	{
-		try
-		{
-			return getInstance(onlyExpose).fromJson(json, classOfT);
-		}
-		catch (Exception ex)
-		{
-			// Log exception
-			return null;
-		}
 	}
 }
