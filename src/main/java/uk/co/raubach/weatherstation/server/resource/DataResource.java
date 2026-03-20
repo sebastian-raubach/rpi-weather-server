@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.math.*;
 import java.sql.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
@@ -119,6 +121,10 @@ public class DataResource extends ContextResource
 			List<Measurements> result = ForecastThread.FORECAST.stream()
 															   .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
 															   .collect(Collectors.toList());
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXX").withZone(ZoneId.systemDefault());
+
+			Logger.getLogger("").info("FORECAST: " + result.stream().map(m -> dtf.format(m.getCreated().toInstant())).collect(Collectors.joining(", ")));
 
 			return Response.ok(result)
 						   .build();
