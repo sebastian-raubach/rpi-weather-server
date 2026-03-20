@@ -8,6 +8,7 @@ import org.jooq.impl.*;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
 import uk.co.raubach.weatherstation.server.util.*;
 
@@ -115,9 +116,11 @@ public class DataResource extends ContextResource
 
 		if (start != null && end != null && ForecastThread.FORECAST != null)
 		{
-			return Response.ok(ForecastThread.FORECAST.stream()
-													  .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
-													  .collect(Collectors.toList()))
+			List<Measurements> result = ForecastThread.FORECAST.stream()
+															   .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
+															   .collect(Collectors.toList());
+
+			return Response.ok(result)
 						   .build();
 		}
 		else
