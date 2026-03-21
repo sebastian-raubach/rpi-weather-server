@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class ForecastThread implements Runnable
 {
-	public static List<Measurements> FORECAST;
+	public static volatile List<Measurements> FORECAST;
 
 	@Override
 	public void run()
@@ -33,10 +33,10 @@ public class ForecastThread implements Runnable
 		HttpUrl builtUrl = builder.build();
 
 		Request request = new Request.Builder()
-			.header("User-Agent", "rpi-weather-station/1.0 sebastian@raubach.co.uk")
-			.get()
-			.url(builtUrl)
-			.build();
+				.header("User-Agent", "rpi-weather-station/1.0 sebastian@raubach.co.uk")
+				.get()
+				.url(builtUrl)
+				.build();
 
 		try
 		{
@@ -61,15 +61,23 @@ public class ForecastThread implements Runnable
 								i.precipitation(data.nextOneHour().details().precipitation());
 							}
 
-							Measurements m = new Measurements();
-							m.setAmbientTemp(i.ambientTemp());
-							m.setHumidity(i.humidity());
-							m.setRainfall(i.precipitation());
-							m.setPressure(i.pressure());
-							m.setHumidity(i.humidity());
-							m.setWindSpeed(i.windSpeed() == null ? null : i.windSpeed().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP));
-							m.setCreated(new Timestamp(t.time().getTime()));
-							measurements.add(m);
+							measurements.add(new Measurements(
+									null,
+									i.ambientTemp(),
+									null,
+									i.pressure(),
+									i.humidity(),
+									null,
+									i.windSpeed() == null ? null : i.windSpeed().multiply(BigDecimal.valueOf(18)).divide(BigDecimal.valueOf(5), 2, RoundingMode.HALF_UP),
+									null,
+									i.precipitation(),
+									null,
+									null,
+									null,
+									null,
+									false,
+									new Timestamp(t.time().getTime())
+							));
 						});
 					}
 
@@ -104,9 +112,9 @@ public class ForecastThread implements Runnable
 		HttpUrl builtUrl = builder.build();
 
 		Request request = new Request.Builder()
-			.get()
-			.url(builtUrl)
-			.build();
+				.get()
+				.url(builtUrl)
+				.build();
 
 		Logger.getLogger("").info("SENDING REQUEST TO: " + request.toString());
 
