@@ -374,8 +374,8 @@ public class DataResource extends ContextResource
 					  .map(m -> {
 						  if (m.getLoftTemp() != null)
 						  {
-							  MeasurementsRecord record = context.selectFrom(MEASUREMENTS).where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDate(m.getCreated(), null)).lt(10))
-																 .and(MEASUREMENTS.CREATED.le(getDate(m.getCreated(), null)))
+							  MeasurementsRecord record = context.selectFrom(MEASUREMENTS).where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDateTime(m.getCreated())).lt(10))
+																 .and(MEASUREMENTS.CREATED.le(getDateTime(m.getCreated())))
 																 .orderBy(MEASUREMENTS.CREATED.desc())
 																 .fetchAny();
 
