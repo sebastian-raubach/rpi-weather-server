@@ -27,7 +27,7 @@ import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measur
 @jakarta.ws.rs.Path("data")
 public class DataResource extends ContextResource
 {
-	private static volatile SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+	private volatile SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 
 	private static BigDecimal windOffset;
 	private static BigDecimal windFactor;
@@ -61,6 +61,18 @@ public class DataResource extends ContextResource
 		{
 			tempOffset = BigDecimal.valueOf(0d);
 		}
+	}
+
+	private synchronized Timestamp getDateTime(String text)
+	{
+		if (StringUtils.isEmpty(text))
+			return null;
+
+		OffsetDateTime odt = OffsetDateTime.parse(text);
+		Instant i = Instant.from(odt);
+		Date d = Date.from(i);
+
+		return new Timestamp(d.getTime());
 	}
 
 	private synchronized Timestamp getDate(String text, Boolean start)
@@ -394,7 +406,7 @@ public class DataResource extends ContextResource
 							  record.setLoftTemp(m.getLoftTemp());
 							  record.setLoftHumidity(m.getLoftHumidity());
 							  record.setUploadedWu(false);
-							  record.setCreated(getDate(m.getCreated(), null));
+							  record.setCreated(getDateTime(m.getCreated()));
 							  return record;
 						  }
 					  })
