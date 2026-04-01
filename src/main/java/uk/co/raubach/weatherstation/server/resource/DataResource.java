@@ -15,11 +15,11 @@ import uk.co.raubach.weatherstation.server.util.*;
 import java.io.IOException;
 import java.math.*;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
@@ -27,6 +27,8 @@ import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measur
 @jakarta.ws.rs.Path("data")
 public class DataResource extends ContextResource
 {
+	private static volatile SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+
 	private static BigDecimal windOffset;
 	private static BigDecimal windFactor;
 	private static BigDecimal tempOffset;
@@ -61,16 +63,39 @@ public class DataResource extends ContextResource
 		}
 	}
 
-	private synchronized Timestamp getDate(String text)
+	private synchronized Timestamp getDate(String text, Boolean start)
 	{
 		if (StringUtils.isEmpty(text))
 			return null;
 
-		OffsetDateTime odt = OffsetDateTime.parse(text);
-		Instant i = Instant.from(odt);
-		Date d = Date.from(i);
+		try
+		{
+			Date d = SDF.parse(text);
+			if (start == true)
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(d);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				return new Timestamp(cal.getTime().getTime());
+			}
+			else if (start == false)
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(d);
+				cal.set(Calendar.HOUR_OF_DAY, 23);
+				cal.set(Calendar.MINUTE, 59);
+				cal.set(Calendar.SECOND, 59);
+				return new Timestamp(cal.getTime().getTime());
+			}
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 
-		return new Timestamp(d.getTime());
+		return null;
 	}
 
 	@DELETE
@@ -87,8 +112,8 @@ public class DataResource extends ContextResource
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		else
 		{
-			Timestamp start = getDate(request.getStart());
-			Timestamp end = getDate(request.getEnd());
+			Timestamp start = getDate(request.getStart(), true);
+			Timestamp end = getDate(request.getEnd(), false);
 
 			if (start == null || end == null)
 				return Response.status(Response.Status.BAD_REQUEST).build();
@@ -113,8 +138,8 @@ public class DataResource extends ContextResource
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDataForecast(@QueryParam("start") String startString, @QueryParam("end") String endString)
 	{
-		Timestamp start = getDate(startString);
-		Timestamp end = getDate(endString);
+		Timestamp start = getDate(startString, true);
+		Timestamp end = getDate(endString, false);
 
 		if (start != null && end != null && ForecastThread.FORECAST != null)
 		{
@@ -123,8 +148,6 @@ public class DataResource extends ContextResource
 															   .collect(Collectors.toList());
 
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXX").withZone(ZoneId.systemDefault());
-
-			Logger.getLogger("").info("FORECAST: " + result.stream().map(m -> dtf.format(m.getCreated().toInstant())).collect(Collectors.joining(", ")));
 
 			return Response.ok(result)
 						   .build();
@@ -141,8 +164,8 @@ public class DataResource extends ContextResource
 	public Response getDataJson(@QueryParam("start") String startString, @QueryParam("end") String endString)
 			throws IOException, SQLException
 	{
-		Timestamp start = getDate(startString);
-		Timestamp end = getDate(endString);
+		Timestamp start = getDate(startString, true);
+		Timestamp end = getDate(endString, false);
 
 		try (Connection conn = Database.getDirectConnection())
 		{
@@ -339,8 +362,8 @@ public class DataResource extends ContextResource
 					  .map(m -> {
 						  if (m.getLoftTemp() != null)
 						  {
-							  MeasurementsRecord record = context.selectFrom(MEASUREMENTS).where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDate(m.getCreated())).lt(10))
-																 .and(MEASUREMENTS.CREATED.le(getDate(m.getCreated())))
+							  MeasurementsRecord record = context.selectFrom(MEASUREMENTS).where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDate(m.getCreated(), null)).lt(10))
+																 .and(MEASUREMENTS.CREATED.le(getDate(m.getCreated(), null)))
 																 .orderBy(MEASUREMENTS.CREATED.desc())
 																 .fetchAny();
 
@@ -371,7 +394,7 @@ public class DataResource extends ContextResource
 							  record.setLoftTemp(m.getLoftTemp());
 							  record.setLoftHumidity(m.getLoftHumidity());
 							  record.setUploadedWu(false);
-							  record.setCreated(getDate(m.getCreated()));
+							  record.setCreated(getDate(m.getCreated(), null));
 							  return record;
 						  }
 					  })
