@@ -69,7 +69,7 @@ public class GsonUtil
 			}
 		});
 		gsonBuilder.registerTypeAdapter(java.sql.Date.class, (JsonSerializer<java.sql.Date>) (src, typeOfSrc, context) -> src == null ? null : new JsonPrimitive(getSDFInstanceDate()
-			.format(src.toInstant())));
+			.format(new Date(src.getTime()).toInstant())));
 		return gsonBuilder;
 	}
 }
