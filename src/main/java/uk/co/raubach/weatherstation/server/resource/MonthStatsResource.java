@@ -91,7 +91,9 @@ public class MonthStatsResource extends ContextResource
 			Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 			AggregatedStats result = new AggregatedStats();
+			result.setMinTemp(context.select(DSL.avg(AGGREGATED.MIN_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
+			result.setMaxTemp(context.select(DSL.avg(AGGREGATED.MAX_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setAvgHumidity(context.select(DSL.avg(AGGREGATED.AVG_HUMIDITY)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setAvgLoftTemperature(context.select(DSL.avg(AGGREGATED.AVG_LOFT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));

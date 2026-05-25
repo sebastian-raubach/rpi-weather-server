@@ -18,6 +18,8 @@ public class AggregatedYearMonth implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private BigDecimal avgAmbientTemp;
+    private BigDecimal minAmbientTemp;
+    private BigDecimal maxAmbientTemp;
     private BigDecimal avgGroundTemp;
     private BigDecimal avgLoftHumidity;
     private BigDecimal avgLoftTemp;
@@ -34,6 +36,8 @@ public class AggregatedYearMonth implements Serializable {
 
     public AggregatedYearMonth(AggregatedYearMonth value) {
         this.avgAmbientTemp = value.avgAmbientTemp;
+        this.minAmbientTemp = value.minAmbientTemp;
+        this.maxAmbientTemp = value.maxAmbientTemp;
         this.avgGroundTemp = value.avgGroundTemp;
         this.avgLoftHumidity = value.avgLoftHumidity;
         this.avgLoftTemp = value.avgLoftTemp;
@@ -49,6 +53,8 @@ public class AggregatedYearMonth implements Serializable {
 
     public AggregatedYearMonth(
         BigDecimal avgAmbientTemp,
+        BigDecimal minAmbientTemp,
+        BigDecimal maxAmbientTemp,
         BigDecimal avgGroundTemp,
         BigDecimal avgLoftHumidity,
         BigDecimal avgLoftTemp,
@@ -62,6 +68,8 @@ public class AggregatedYearMonth implements Serializable {
         Short month
     ) {
         this.avgAmbientTemp = avgAmbientTemp;
+        this.minAmbientTemp = minAmbientTemp;
+        this.maxAmbientTemp = maxAmbientTemp;
         this.avgGroundTemp = avgGroundTemp;
         this.avgLoftHumidity = avgLoftHumidity;
         this.avgLoftTemp = avgLoftTemp;
@@ -89,6 +97,38 @@ public class AggregatedYearMonth implements Serializable {
      */
     public void setAvgAmbientTemp(BigDecimal avgAmbientTemp) {
         this.avgAmbientTemp = avgAmbientTemp;
+    }
+
+    /**
+     * Getter for
+     * <code>weatherstation_db.aggregated_year_month.min_ambient_temp</code>.
+     */
+    public BigDecimal getMinAmbientTemp() {
+        return this.minAmbientTemp;
+    }
+
+    /**
+     * Setter for
+     * <code>weatherstation_db.aggregated_year_month.min_ambient_temp</code>.
+     */
+    public void setMinAmbientTemp(BigDecimal minAmbientTemp) {
+        this.minAmbientTemp = minAmbientTemp;
+    }
+
+    /**
+     * Getter for
+     * <code>weatherstation_db.aggregated_year_month.max_ambient_temp</code>.
+     */
+    public BigDecimal getMaxAmbientTemp() {
+        return this.maxAmbientTemp;
+    }
+
+    /**
+     * Setter for
+     * <code>weatherstation_db.aggregated_year_month.max_ambient_temp</code>.
+     */
+    public void setMaxAmbientTemp(BigDecimal maxAmbientTemp) {
+        this.maxAmbientTemp = maxAmbientTemp;
     }
 
     /**
@@ -276,6 +316,18 @@ public class AggregatedYearMonth implements Serializable {
         }
         else if (!this.avgAmbientTemp.equals(other.avgAmbientTemp))
             return false;
+        if (this.minAmbientTemp == null) {
+            if (other.minAmbientTemp != null)
+                return false;
+        }
+        else if (!this.minAmbientTemp.equals(other.minAmbientTemp))
+            return false;
+        if (this.maxAmbientTemp == null) {
+            if (other.maxAmbientTemp != null)
+                return false;
+        }
+        else if (!this.maxAmbientTemp.equals(other.maxAmbientTemp))
+            return false;
         if (this.avgGroundTemp == null) {
             if (other.avgGroundTemp != null)
                 return false;
@@ -350,6 +402,8 @@ public class AggregatedYearMonth implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.avgAmbientTemp == null) ? 0 : this.avgAmbientTemp.hashCode());
+        result = prime * result + ((this.minAmbientTemp == null) ? 0 : this.minAmbientTemp.hashCode());
+        result = prime * result + ((this.maxAmbientTemp == null) ? 0 : this.maxAmbientTemp.hashCode());
         result = prime * result + ((this.avgGroundTemp == null) ? 0 : this.avgGroundTemp.hashCode());
         result = prime * result + ((this.avgLoftHumidity == null) ? 0 : this.avgLoftHumidity.hashCode());
         result = prime * result + ((this.avgLoftTemp == null) ? 0 : this.avgLoftTemp.hashCode());
@@ -369,6 +423,8 @@ public class AggregatedYearMonth implements Serializable {
         StringBuilder sb = new StringBuilder("AggregatedYearMonth (");
 
         sb.append(avgAmbientTemp);
+        sb.append(", ").append(minAmbientTemp);
+        sb.append(", ").append(maxAmbientTemp);
         sb.append(", ").append(avgGroundTemp);
         sb.append(", ").append(avgLoftHumidity);
         sb.append(", ").append(avgLoftTemp);

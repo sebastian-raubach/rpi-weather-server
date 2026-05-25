@@ -99,6 +99,8 @@ public class AggregatedCalculatorThread implements Runnable
 			context.insertInto(AGGREGATED_YEAR_MONTH)
 				   .select(context.select(
 										  DSL.avg(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("avg_ambient_temp"),
+										  DSL.min(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("min_ambient_temp"),
+										  DSL.max(MEASUREMENTS.AMBIENT_TEMP.add(tempOffset)).as("max_ambient_temp"),
 										  DSL.avg(MEASUREMENTS.GROUND_TEMP.add(tempOffset)).as("avg_ground_temp"),
 										  DSL.avg(MEASUREMENTS.LOFT_HUMIDITY).as("avg_loft_humidity"),
 										  DSL.avg(MEASUREMENTS.LOFT_TEMP).as("avg_loft_temp"),

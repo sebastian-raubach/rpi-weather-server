@@ -60,6 +60,18 @@ public class AggregatedYearMonth extends TableImpl<AggregatedYearMonthRecord> {
 
     /**
      * The column
+     * <code>weatherstation_db.aggregated_year_month.min_ambient_temp</code>.
+     */
+    public final TableField<AggregatedYearMonthRecord, BigDecimal> MIN_AMBIENT_TEMP = createField(DSL.name("min_ambient_temp"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column
+     * <code>weatherstation_db.aggregated_year_month.max_ambient_temp</code>.
+     */
+    public final TableField<AggregatedYearMonthRecord, BigDecimal> MAX_AMBIENT_TEMP = createField(DSL.name("max_ambient_temp"), SQLDataType.DECIMAL(6, 2), this, "");
+
+    /**
+     * The column
      * <code>weatherstation_db.aggregated_year_month.avg_ground_temp</code>.
      */
     public final TableField<AggregatedYearMonthRecord, BigDecimal> AVG_GROUND_TEMP = createField(DSL.name("avg_ground_temp"), SQLDataType.DECIMAL(6, 2), this, "");

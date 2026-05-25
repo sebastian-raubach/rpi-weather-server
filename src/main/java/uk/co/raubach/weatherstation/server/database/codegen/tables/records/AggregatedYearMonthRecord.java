@@ -39,10 +39,42 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
 
     /**
      * Setter for
+     * <code>weatherstation_db.aggregated_year_month.min_ambient_temp</code>.
+     */
+    public void setMinAmbientTemp(BigDecimal value) {
+        set(1, value);
+    }
+
+    /**
+     * Getter for
+     * <code>weatherstation_db.aggregated_year_month.min_ambient_temp</code>.
+     */
+    public BigDecimal getMinAmbientTemp() {
+        return (BigDecimal) get(1);
+    }
+
+    /**
+     * Setter for
+     * <code>weatherstation_db.aggregated_year_month.max_ambient_temp</code>.
+     */
+    public void setMaxAmbientTemp(BigDecimal value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for
+     * <code>weatherstation_db.aggregated_year_month.max_ambient_temp</code>.
+     */
+    public BigDecimal getMaxAmbientTemp() {
+        return (BigDecimal) get(2);
+    }
+
+    /**
+     * Setter for
      * <code>weatherstation_db.aggregated_year_month.avg_ground_temp</code>.
      */
     public void setAvgGroundTemp(BigDecimal value) {
-        set(1, value);
+        set(3, value);
     }
 
     /**
@@ -50,7 +82,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_ground_temp</code>.
      */
     public BigDecimal getAvgGroundTemp() {
-        return (BigDecimal) get(1);
+        return (BigDecimal) get(3);
     }
 
     /**
@@ -58,7 +90,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_loft_humidity</code>.
      */
     public void setAvgLoftHumidity(BigDecimal value) {
-        set(2, value);
+        set(4, value);
     }
 
     /**
@@ -66,7 +98,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_loft_humidity</code>.
      */
     public BigDecimal getAvgLoftHumidity() {
-        return (BigDecimal) get(2);
+        return (BigDecimal) get(4);
     }
 
     /**
@@ -74,7 +106,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_loft_temp</code>.
      */
     public void setAvgLoftTemp(BigDecimal value) {
-        set(3, value);
+        set(5, value);
     }
 
     /**
@@ -82,21 +114,21 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_loft_temp</code>.
      */
     public BigDecimal getAvgLoftTemp() {
-        return (BigDecimal) get(3);
+        return (BigDecimal) get(5);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated_year_month.avg_lux</code>.
      */
     public void setAvgLux(BigDecimal value) {
-        set(4, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated_year_month.avg_lux</code>.
      */
     public BigDecimal getAvgLux() {
-        return (BigDecimal) get(4);
+        return (BigDecimal) get(6);
     }
 
     /**
@@ -104,7 +136,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_pressure</code>.
      */
     public void setAvgPressure(BigDecimal value) {
-        set(5, value);
+        set(7, value);
     }
 
     /**
@@ -112,7 +144,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_pressure</code>.
      */
     public BigDecimal getAvgPressure() {
-        return (BigDecimal) get(5);
+        return (BigDecimal) get(7);
     }
 
     /**
@@ -120,7 +152,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_humidity</code>.
      */
     public void setAvgHumidity(BigDecimal value) {
-        set(6, value);
+        set(8, value);
     }
 
     /**
@@ -128,7 +160,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_humidity</code>.
      */
     public BigDecimal getAvgHumidity() {
-        return (BigDecimal) get(6);
+        return (BigDecimal) get(8);
     }
 
     /**
@@ -136,7 +168,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_wind_speed</code>.
      */
     public void setAvgWindSpeed(BigDecimal value) {
-        set(7, value);
+        set(9, value);
     }
 
     /**
@@ -144,7 +176,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_wind_speed</code>.
      */
     public BigDecimal getAvgWindSpeed() {
-        return (BigDecimal) get(7);
+        return (BigDecimal) get(9);
     }
 
     /**
@@ -152,7 +184,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_wind_gust</code>.
      */
     public void setAvgWindGust(BigDecimal value) {
-        set(8, value);
+        set(10, value);
     }
 
     /**
@@ -160,7 +192,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.avg_wind_gust</code>.
      */
     public BigDecimal getAvgWindGust() {
-        return (BigDecimal) get(8);
+        return (BigDecimal) get(10);
     }
 
     /**
@@ -168,7 +200,7 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.sum_rainfall</code>.
      */
     public void setSumRainfall(BigDecimal value) {
-        set(9, value);
+        set(11, value);
     }
 
     /**
@@ -176,35 +208,35 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
      * <code>weatherstation_db.aggregated_year_month.sum_rainfall</code>.
      */
     public BigDecimal getSumRainfall() {
-        return (BigDecimal) get(9);
+        return (BigDecimal) get(11);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated_year_month.year</code>.
      */
     public void setYear(Short value) {
-        set(10, value);
+        set(12, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated_year_month.year</code>.
      */
     public Short getYear() {
-        return (Short) get(10);
+        return (Short) get(12);
     }
 
     /**
      * Setter for <code>weatherstation_db.aggregated_year_month.month</code>.
      */
     public void setMonth(Short value) {
-        set(11, value);
+        set(13, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.aggregated_year_month.month</code>.
      */
     public Short getMonth() {
-        return (Short) get(11);
+        return (Short) get(13);
     }
 
     // -------------------------------------------------------------------------
@@ -230,10 +262,12 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
     /**
      * Create a detached, initialised AggregatedYearMonthRecord
      */
-    public AggregatedYearMonthRecord(BigDecimal avgAmbientTemp, BigDecimal avgGroundTemp, BigDecimal avgLoftHumidity, BigDecimal avgLoftTemp, BigDecimal avgLux, BigDecimal avgPressure, BigDecimal avgHumidity, BigDecimal avgWindSpeed, BigDecimal avgWindGust, BigDecimal sumRainfall, Short year, Short month) {
+    public AggregatedYearMonthRecord(BigDecimal avgAmbientTemp, BigDecimal minAmbientTemp, BigDecimal maxAmbientTemp, BigDecimal avgGroundTemp, BigDecimal avgLoftHumidity, BigDecimal avgLoftTemp, BigDecimal avgLux, BigDecimal avgPressure, BigDecimal avgHumidity, BigDecimal avgWindSpeed, BigDecimal avgWindGust, BigDecimal sumRainfall, Short year, Short month) {
         super(AggregatedYearMonth.AGGREGATED_YEAR_MONTH);
 
         setAvgAmbientTemp(avgAmbientTemp);
+        setMinAmbientTemp(minAmbientTemp);
+        setMaxAmbientTemp(maxAmbientTemp);
         setAvgGroundTemp(avgGroundTemp);
         setAvgLoftHumidity(avgLoftHumidity);
         setAvgLoftTemp(avgLoftTemp);
@@ -256,6 +290,8 @@ public class AggregatedYearMonthRecord extends UpdatableRecordImpl<AggregatedYea
 
         if (value != null) {
             setAvgAmbientTemp(value.getAvgAmbientTemp());
+            setMinAmbientTemp(value.getMinAmbientTemp());
+            setMaxAmbientTemp(value.getMaxAmbientTemp());
             setAvgGroundTemp(value.getAvgGroundTemp());
             setAvgLoftHumidity(value.getAvgLoftHumidity());
             setAvgLoftTemp(value.getAvgLoftTemp());
