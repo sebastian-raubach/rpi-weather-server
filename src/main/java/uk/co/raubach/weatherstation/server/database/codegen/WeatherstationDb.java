@@ -16,6 +16,7 @@ import uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.AggregatedYearMonth;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.SchemaVersion;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.ViewPeriods;
 
 
 // @formatter:off
@@ -51,7 +52,8 @@ public class WeatherstationDb extends SchemaImpl {
             Aggregated.AGGREGATED,
             AggregatedYearMonth.AGGREGATED_YEAR_MONTH,
             Measurements.MEASUREMENTS,
-            SchemaVersion.SCHEMA_VERSION
+            SchemaVersion.SCHEMA_VERSION,
+            ViewPeriods.VIEW_PERIODS
         );
     }
     // @formatter:on

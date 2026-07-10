@@ -5,7 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
 import org.jooq.impl.DSL;
-import uk.co.raubach.weatherstation.resource.AggregatedStats;
+import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.*;
 
@@ -36,8 +36,8 @@ public class MonthStatsResource extends ContextResource
 			DSLContext context = Database.getContext(conn);
 
 			return Response.ok(context.selectFrom(AGGREGATED_YEAR_MONTH)
-									  .where(AGGREGATED_YEAR_MONTH.MONTH.eq(month.shortValue()))
-									  .fetchInto(AggregatedYearMonth.class)).build();
+			                          .where(AGGREGATED_YEAR_MONTH.MONTH.eq(month.shortValue()))
+			                          .fetchInto(AggregatedYearMonth.class)).build();
 		}
 	}
 
@@ -64,8 +64,8 @@ public class MonthStatsResource extends ContextResource
 				Condition condition = DSL.month(AGGREGATED.DATE).eq(month).and(DSL.year(AGGREGATED.DATE).eq(year));
 
 				List<Aggregated> yearData = context.selectFrom(AGGREGATED)
-												   .where(condition)
-												   .fetchInto(Aggregated.class);
+				                                   .where(condition)
+				                                   .fetchInto(Aggregated.class);
 
 				result.put(year, yearData);
 			}
@@ -100,25 +100,29 @@ public class MonthStatsResource extends ContextResource
 			result.setAvgLux(context.select(DSL.avg(AGGREGATED.AVG_LUX)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setAvgLoftHumidity(context.select(DSL.avg(AGGREGATED.AVG_LOFT_HUMIDITY)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setMostRain(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.SUM_RAINFALL.as("value"))
-									  .from(AGGREGATED)
-									  .where(condition)
-									  .and(AGGREGATED.SUM_RAINFALL.eq(DSL.select(DSL.max(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).where(condition)))
-									  .fetchAnyInto(AggregatedStats.Day.class));
+			                          .from(AGGREGATED)
+			                          .where(condition)
+			                          .orderBy(AGGREGATED.SUM_RAINFALL.desc())
+			                          .limit(1)
+			                          .fetchAnyInto(Day.class));
 			result.setMostWind(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_WIND_GUST.as("value"))
-									  .from(AGGREGATED)
-									  .where(condition)
-									  .and(AGGREGATED.MAX_WIND_GUST.eq(DSL.select(DSL.max(AGGREGATED.MAX_WIND_GUST)).from(AGGREGATED).where(condition)))
-									  .fetchAnyInto(AggregatedStats.Day.class));
+			                          .from(AGGREGATED)
+			                          .where(condition)
+			                          .orderBy(AGGREGATED.MAX_WIND_GUST.desc())
+			                          .limit(1)
+			                          .fetchAnyInto(Day.class));
 			result.setHighestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_AMBIENT_TEMP.as("value"))
-										 .from(AGGREGATED)
-										 .where(condition)
-										 .and(AGGREGATED.MAX_AMBIENT_TEMP.eq(DSL.select(DSL.max(AGGREGATED.MAX_AMBIENT_TEMP)).from(AGGREGATED).where(condition)))
-										 .fetchAnyInto(AggregatedStats.Day.class));
+			                             .from(AGGREGATED)
+			                             .where(condition)
+			                             .orderBy(AGGREGATED.MAX_AMBIENT_TEMP.desc())
+			                             .limit(1)
+			                             .fetchAnyInto(Day.class));
 			result.setLowestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MIN_AMBIENT_TEMP.as("value"))
-										.from(AGGREGATED)
-										.where(condition)
-										.and(AGGREGATED.MIN_AMBIENT_TEMP.eq(DSL.select(DSL.min(AGGREGATED.MIN_AMBIENT_TEMP)).from(AGGREGATED).where(condition)))
-										.fetchAnyInto(AggregatedStats.Day.class));
+			                            .from(AGGREGATED)
+			                            .where(condition)
+			                            .orderBy(AGGREGATED.MIN_AMBIENT_TEMP.asc())
+			                            .limit(1)
+			                            .fetchAnyInto(Day.class));
 
 			return Response.ok(result).build();
 		}

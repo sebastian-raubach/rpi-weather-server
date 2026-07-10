@@ -1,13 +1,15 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 3.2.1263 on 2026-02-26 14:31:19.
+// Generated using typescript-generator version 3.2.1263 on 2026-07-10 09:42:06.
 
 export interface AggregatedStats {
     highestTemp: Day;
     lowestTemp: Day;
     mostRain: Day;
     mostWind: Day;
+    minTemp: number;
     avgTemp: number;
+    maxTemp: number;
     totalRain: number;
     avgLux: number;
     avgHumidity: number;
@@ -21,6 +23,11 @@ export interface DailyStats {
     min: TypeStats;
     max: TypeStats;
     stdv: TypeStats;
+}
+
+export interface Day {
+    date: Date;
+    value: number;
 }
 
 export interface ExtendedMeasurement extends Measurements {
@@ -56,6 +63,15 @@ export interface RainfallDeleteRequest {
     start: string;
     end: string;
     uuid: string;
+}
+
+export interface RankedStats {
+    highestTemp: Day[];
+    lowestTemp: Day[];
+    highestRain: Day[];
+    highestWind: Day[];
+    longestDryPeriod: ViewPeriods;
+    longestWetPeriod: ViewPeriods;
 }
 
 export interface TidalInfo {
@@ -114,6 +130,8 @@ export interface Aggregated extends Serializable {
 
 export interface AggregatedYearMonth extends Serializable {
     avgAmbientTemp: number;
+    minAmbientTemp: number;
+    maxAmbientTemp: number;
     avgGroundTemp: number;
     avgLoftHumidity: number;
     avgLoftTemp: number;
@@ -158,9 +176,12 @@ export interface SchemaVersion extends Serializable {
     success: boolean;
 }
 
-export interface Day {
-    date: Date;
-    value: number;
+export interface ViewPeriods extends Serializable {
+    type: string;
+    startDate: Date;
+    endDate: Date;
+    consecutiveDays: number;
+    totalRainAmount: number;
 }
 
 export interface TypeStats {

@@ -5,13 +5,13 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
 import org.jooq.impl.DSL;
-import uk.co.raubach.weatherstation.resource.AggregatedStats;
+import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.*;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Aggregated;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.*;
+import java.sql.Date;
 import java.time.*;
 import java.util.*;
 
@@ -44,8 +44,8 @@ public class WeekStatsResource extends ContextResource
 				Condition condition = AGGREGATED.DATE.ge(Date.valueOf(start.toLocalDate())).and(AGGREGATED.DATE.le(Date.valueOf(end.toLocalDate())));
 
 				List<Aggregated> yearData = context.selectFrom(AGGREGATED)
-													 .where(condition)
-													 .fetchInto(Aggregated.class);
+				                                   .where(condition)
+				                                   .fetchInto(Aggregated.class);
 
 				result.put(year, yearData);
 			}
@@ -73,25 +73,29 @@ public class WeekStatsResource extends ContextResource
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).where(condition).fetchAnyInto(BigDecimal.class));
 			result.setMostRain(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.SUM_RAINFALL.as("value"))
-									  .from(AGGREGATED)
-									  .where(condition)
-									  .and(AGGREGATED.SUM_RAINFALL.eq(DSL.select(DSL.max(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).where(condition)))
-									  .fetchAnyInto(AggregatedStats.Day.class));
+			                          .from(AGGREGATED)
+			                          .where(condition)
+			                          .orderBy(AGGREGATED.SUM_RAINFALL.desc())
+			                          .limit(1)
+			                          .fetchAnyInto(Day.class));
 			result.setMostWind(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_WIND_GUST.as("value"))
-									  .from(AGGREGATED)
-									  .where(condition)
-									  .and(AGGREGATED.MAX_WIND_GUST.eq(DSL.select(DSL.max(AGGREGATED.MAX_WIND_GUST)).from(AGGREGATED).where(condition)))
-									  .fetchAnyInto(AggregatedStats.Day.class));
+			                          .from(AGGREGATED)
+			                          .where(condition)
+			                          .orderBy(AGGREGATED.MAX_WIND_GUST.desc())
+			                          .limit(1)
+			                          .fetchAnyInto(Day.class));
 			result.setHighestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MAX_AMBIENT_TEMP.as("value"))
-										 .from(AGGREGATED)
-										 .where(condition)
-										 .and(AGGREGATED.MAX_AMBIENT_TEMP.eq(DSL.select(DSL.max(AGGREGATED.MAX_AMBIENT_TEMP)).from(AGGREGATED).where(condition)))
-										 .fetchAnyInto(AggregatedStats.Day.class));
+			                             .from(AGGREGATED)
+			                             .where(condition)
+			                             .orderBy(AGGREGATED.MAX_AMBIENT_TEMP.desc())
+			                             .limit(1)
+			                             .fetchAnyInto(Day.class));
 			result.setLowestTemp(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.MIN_AMBIENT_TEMP.as("value"))
-										.from(AGGREGATED)
-										.where(condition)
-										.and(AGGREGATED.MIN_AMBIENT_TEMP.eq(DSL.select(DSL.min(AGGREGATED.MIN_AMBIENT_TEMP)).from(AGGREGATED).where(condition)))
-										.fetchAnyInto(AggregatedStats.Day.class));
+			                            .from(AGGREGATED)
+			                            .where(condition)
+			                            .orderBy(AGGREGATED.MIN_AMBIENT_TEMP.asc())
+			                            .limit(1)
+			                            .fetchAnyInto(Day.class));
 
 			return Response.ok(result).build();
 		}
