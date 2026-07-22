@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.TimeZone;
 import java.util.logging.*;
 
-import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.*;
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
 /**
  * @author Sebastian Raubach
@@ -32,6 +32,9 @@ public class Database
 
 	private static final String utc = TimeZone.getDefault().getID();
 
+	// Top-level function syntax & trailing comma guidelines apply
+	private static Settings GLOBAL_SETTINGS;
+
 	public static void init(String databaseServer, String databaseName, String databasePort, String username, String password, boolean initAndUpdate)
 	{
 		Database.databaseServer = databaseServer;
@@ -39,6 +42,13 @@ public class Database
 		Database.databasePort = databasePort;
 		Database.username = username;
 		Database.password = password;
+
+		GLOBAL_SETTINGS = new Settings()
+				.withQueryTimeout(30)
+				.withRenderMapping(new RenderMapping()
+						.withSchemata(
+								new MappedSchema().withInput(WeatherstationDb.WEATHERSTATION_DB.getQualifiedName().first())
+								                  .withOutput(databaseName)));
 
 		try
 		{
@@ -88,7 +98,7 @@ public class Database
 				DSLContext context = Database.getContext(conn);
 				// Try and see if the `measurements` table exists
 				context.selectFrom(MEASUREMENTS)
-					   .fetchAny();
+				       .fetchAny();
 			}
 			catch (SQLException | DataAccessException e)
 			{
@@ -137,12 +147,12 @@ public class Database
 			{
 				Logger.getLogger("").log(Level.INFO, "RUNNING FLYWAY on: " + databaseName);
 				Flyway flyway = Flyway.configure()
-									  .table("schema_version")
-									  .validateOnMigrate(false)
-									  .dataSource(getDatabaseUrl(), username, password)
-									  .locations("classpath:uk/co/raubach/weatherstation/server/database/migration")
-									  .baselineOnMigrate(true)
-									  .load();
+				                      .table("schema_version")
+				                      .validateOnMigrate(false)
+				                      .dataSource(getDatabaseUrl(), username, password)
+				                      .locations("classpath:uk/co/raubach/weatherstation/server/database/migration")
+				                      .baselineOnMigrate(true)
+				                      .load();
 				flyway.migrate();
 				flyway.repair();
 			}
@@ -176,7 +186,7 @@ public class Database
 	private static void executeFile(File sqlFile)
 	{
 		try (Connection conn = Database.getDirectConnection();
-			 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sqlFile), StandardCharsets.UTF_8)))
+		     BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sqlFile), StandardCharsets.UTF_8)))
 		{
 			ScriptRunner runner = new ScriptRunner(conn, true, true);
 			runner.runScript(br);
@@ -193,7 +203,7 @@ public class Database
 	}
 
 	public static Connection getDirectConnection()
-		throws SQLException
+			throws SQLException
 	{
 		Connection conn = DriverManager.getConnection(getDatabaseUrl(), username, password);
 		conn.setAutoCommit(true);
@@ -202,13 +212,7 @@ public class Database
 
 	public static DSLContext getContext(Connection connection)
 	{
-		Settings settings = new Settings()
-			.withRenderMapping(new RenderMapping()
-				.withSchemata(
-					new MappedSchema().withInput(WeatherstationDb.WEATHERSTATION_DB.getQualifiedName().first())
-									  .withOutput(databaseName)));
-
-		return DSL.using(connection, SQLDialect.MYSQL, settings);
+		return DSL.using(connection, SQLDialect.MYSQL, GLOBAL_SETTINGS);
 	}
 
 	public static String getDatabaseServer()
