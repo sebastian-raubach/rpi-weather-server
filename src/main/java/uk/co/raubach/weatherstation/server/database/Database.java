@@ -189,13 +189,15 @@ public class Database
 
 	private static String getDatabaseUrl()
 	{
-		return "jdbc:mysql://" + databaseServer + ":" + (StringUtils.isEmpty(databasePort) ? "3306" : databasePort) + "/" + databaseName + "?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=" + utc;
+		return "jdbc:mysql://" + databaseServer + ":" + (StringUtils.isEmpty(databasePort) ? "3306" : databasePort) + "/" + databaseName + "?tcpKeepAlive=true&autoReconnect=true&socketTimeout=15000&useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=" + utc;
 	}
 
 	public static Connection getDirectConnection()
 		throws SQLException
 	{
-		return DriverManager.getConnection(getDatabaseUrl(), username, password);
+		Connection conn = DriverManager.getConnection(getDatabaseUrl(), username, password);
+		conn.setAutoCommit(true);
+		return conn;
 	}
 
 	public static DSLContext getContext(Connection connection)
