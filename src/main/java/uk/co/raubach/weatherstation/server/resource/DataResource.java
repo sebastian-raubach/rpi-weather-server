@@ -4,7 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
-import org.jooq.impl.*;
+import org.jooq.impl.DSL;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
@@ -135,9 +135,9 @@ public class DataResource extends ContextResource
 				DSLContext context = Database.getContext(conn);
 
 				context.update(MEASUREMENTS).set(MEASUREMENTS.RAINFALL, BigDecimal.valueOf(0))
-					   .where(MEASUREMENTS.CREATED.ge(start))
-					   .and(MEASUREMENTS.CREATED.le(end))
-					   .execute();
+				       .where(MEASUREMENTS.CREATED.ge(start))
+				       .and(MEASUREMENTS.CREATED.le(end))
+				       .execute();
 
 				return Response.ok().build();
 			}
@@ -156,13 +156,13 @@ public class DataResource extends ContextResource
 		if (start != null && end != null && ForecastThread.FORECAST != null)
 		{
 			List<Measurements> result = ForecastThread.FORECAST.stream()
-															   .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
-															   .collect(Collectors.toList());
+			                                                   .filter(t -> t.getCreated().getTime() >= start.getTime() && t.getCreated().getTime() <= end.getTime())
+			                                                   .collect(Collectors.toList());
 
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXX").withZone(ZoneId.systemDefault());
 
 			return Response.ok(result)
-						   .build();
+			               .build();
 		}
 		else
 		{
@@ -369,49 +369,46 @@ public class DataResource extends ContextResource
 			try (Connection conn = Database.getDirectConnection())
 			{
 				DSLContext context = Database.getContext(conn);
-				Arrays.stream(measurements)
-					  .filter(m -> m.getCreated() != null)
-					  .map(m -> {
-						  if (m.getLoftTemp() != null)
-						  {
-							  MeasurementsRecord record = context.selectFrom(MEASUREMENTS).where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDateTime(m.getCreated())).lt(10))
-																 .and(MEASUREMENTS.CREATED.le(getDateTime(m.getCreated())))
-																 .orderBy(MEASUREMENTS.CREATED.desc())
-																 .fetchAny();
+				for (MeasurementPojo measurement : measurements)
+				{
+					if (measurement.getCreated() != null)
+					{
+						if (measurement.getLoftTemp() != null)
+						{
+							MeasurementsRecord record = context.selectFrom(MEASUREMENTS)
+							                                   .where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDateTime(measurement.getCreated())).lt(10))
+							                                   .and(MEASUREMENTS.CREATED.le(getDateTime(measurement.getCreated())))
+							                                   .orderBy(MEASUREMENTS.CREATED.desc())
+							                                   .fetchAny();
 
-							  if (record != null)
-							  {
-								  record.setLoftTemp(m.getLoftTemp());
-								  record.setLoftHumidity(m.getLoftHumidity());
-								  return record;
-							  }
-							  else
-							  {
-								  return null;
-							  }
-						  }
-						  else
-						  {
-							  MeasurementsRecord record = context.newRecord(MEASUREMENTS);
-							  record.setAmbientTemp(m.getAmbientTemp());
-							  record.setGroundTemp(m.getGroundTemp());
-							  record.setPressure(m.getPressure());
-							  record.setHumidity(m.getHumidity());
-							  record.setWindAverage(m.getWindAverage());
-							  record.setWindSpeed(m.getWindSpeed());
-							  record.setWindGust(m.getWindGust());
-							  record.setRainfall(m.getRainfall());
-							  record.setPiTemp(m.getPiTemp());
-							  record.setLux(m.getLux());
-							  record.setLoftTemp(m.getLoftTemp());
-							  record.setLoftHumidity(m.getLoftHumidity());
-							  record.setUploadedWu(false);
-							  record.setCreated(getDateTime(m.getCreated()));
-							  return record;
-						  }
-					  })
-					  .filter(Objects::nonNull)
-					  .forEach(UpdatableRecordImpl::store);
+							if (record != null)
+							{
+								record.setLoftTemp(measurement.getLoftTemp());
+								record.setLoftHumidity(measurement.getLoftHumidity());
+								record.store();
+							}
+						}
+						else
+						{
+							MeasurementsRecord record = context.newRecord(MEASUREMENTS);
+							record.setAmbientTemp(measurement.getAmbientTemp());
+							record.setGroundTemp(measurement.getGroundTemp());
+							record.setPressure(measurement.getPressure());
+							record.setHumidity(measurement.getHumidity());
+							record.setWindAverage(measurement.getWindAverage());
+							record.setWindSpeed(measurement.getWindSpeed());
+							record.setWindGust(measurement.getWindGust());
+							record.setRainfall(measurement.getRainfall());
+							record.setPiTemp(measurement.getPiTemp());
+							record.setLux(measurement.getLux());
+							record.setLoftTemp(measurement.getLoftTemp());
+							record.setLoftHumidity(measurement.getLoftHumidity());
+							record.setUploadedWu(false);
+							record.setCreated(getDateTime(measurement.getCreated()));
+							record.store();
+						}
+					}
+				}
 			}
 		}
 
