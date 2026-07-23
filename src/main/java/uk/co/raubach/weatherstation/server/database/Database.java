@@ -199,7 +199,7 @@ public class Database
 
 	private static String getDatabaseUrl()
 	{
-		return "jdbc:mysql://" + databaseServer + ":" + (StringUtils.isEmpty(databasePort) ? "3306" : databasePort) + "/" + databaseName + "?tcpKeepAlive=true&autoReconnect=true&socketTimeout=15000&useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=" + utc;
+		return "jdbc:mysql://" + databaseServer + ":" + (StringUtils.isEmpty(databasePort) ? "3306" : databasePort) + "/" + databaseName + "?tcpKeepAlive=true&socketTimeout=15000&useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=" + utc;
 	}
 
 	public static Connection getDirectConnection()

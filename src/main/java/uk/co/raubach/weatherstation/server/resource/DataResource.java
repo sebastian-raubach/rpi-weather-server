@@ -4,7 +4,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
@@ -375,10 +374,15 @@ public class DataResource extends ContextResource
 					{
 						if (measurement.getLoftTemp() != null)
 						{
+
+							Timestamp target = getDateTime(measurement.getCreated());
+							Timestamp windowStart = new Timestamp(target.getTime() - 10 * 60 * 1000L);
+
 							MeasurementsRecord record = context.selectFrom(MEASUREMENTS)
-							                                   .where(DSL.timestampDiff(DatePart.MINUTE, MEASUREMENTS.CREATED, getDateTime(measurement.getCreated())).lt(10))
-							                                   .and(MEASUREMENTS.CREATED.le(getDateTime(measurement.getCreated())))
+							                                   .where(MEASUREMENTS.CREATED.ge(windowStart))
+							                                   .and(MEASUREMENTS.CREATED.le(target))
 							                                   .orderBy(MEASUREMENTS.CREATED.desc())
+							                                   .limit(1)
 							                                   .fetchAny();
 
 							if (record != null)
