@@ -17,8 +17,8 @@
 		</generate>
 
 		<database>
-			<excludes>
-			</excludes>
+			<includeExcludeColumns>true</includeExcludeColumns>
+			<excludes>.*\.measurements\.(created_year|created_month|created_day)</excludes>
 			<includes>.*</includes>
 			<inputSchema>weather_station</inputSchema>
 			<outputSchema>weatherstation_db</outputSchema>
@@ -26,9 +26,19 @@
 
 			<forcedTypes>
 				<forcedType>
-					<expression>.*</expression>
+					<expression>.*(measurements).*\.(uploaded_wu).*</expression>
 					<name>BOOLEAN</name>
 					<types>.*tinyint.*</types>
+				</forcedType>
+				<forcedType>
+					<expression>.*(lux_climatology).*\..*</expression>
+					<name>DOUBLE</name>
+					<types>.*decimal.*</types>
+				</forcedType>
+				<forcedType>
+					<expression>.*(lux_climatology).*\..*</expression>
+					<name>INTEGER</name>
+					<types>.*(tinyint).*</types>
 				</forcedType>
 			</forcedTypes>
 		</database>

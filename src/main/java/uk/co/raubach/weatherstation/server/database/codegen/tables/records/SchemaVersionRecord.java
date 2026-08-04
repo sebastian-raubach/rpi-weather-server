@@ -150,15 +150,15 @@ public class SchemaVersionRecord extends UpdatableRecordImpl<SchemaVersionRecord
     /**
      * Setter for <code>weatherstation_db.schema_version.success</code>.
      */
-    public void setSuccess(Boolean value) {
+    public void setSuccess(Byte value) {
         set(9, value);
     }
 
     /**
      * Getter for <code>weatherstation_db.schema_version.success</code>.
      */
-    public Boolean getSuccess() {
-        return (Boolean) get(9);
+    public Byte getSuccess() {
+        return (Byte) get(9);
     }
 
     // -------------------------------------------------------------------------
@@ -184,7 +184,7 @@ public class SchemaVersionRecord extends UpdatableRecordImpl<SchemaVersionRecord
     /**
      * Create a detached, initialised SchemaVersionRecord
      */
-    public SchemaVersionRecord(Integer installedRank, String version, String description, String type, String script, Integer checksum, String installedBy, Timestamp installedOn, Integer executionTime, Boolean success) {
+    public SchemaVersionRecord(Integer installedRank, String version, String description, String type, String script, Integer checksum, String installedBy, Timestamp installedOn, Integer executionTime, Byte success) {
         super(SchemaVersion.SCHEMA_VERSION);
 
         setInstalledRank(installedRank);

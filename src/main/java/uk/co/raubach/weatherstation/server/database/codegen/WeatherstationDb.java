@@ -14,6 +14,7 @@ import org.jooq.impl.SchemaImpl;
 
 import uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.AggregatedYearMonth;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.LuxClimatology;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.SchemaVersion;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.ViewPeriods;
@@ -51,6 +52,7 @@ public class WeatherstationDb extends SchemaImpl {
         return Arrays.asList(
             Aggregated.AGGREGATED,
             AggregatedYearMonth.AGGREGATED_YEAR_MONTH,
+            LuxClimatology.LUX_CLIMATOLOGY,
             Measurements.MEASUREMENTS,
             SchemaVersion.SCHEMA_VERSION,
             ViewPeriods.VIEW_PERIODS

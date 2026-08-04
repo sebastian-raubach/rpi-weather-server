@@ -26,6 +26,7 @@ public class ApplicationListener implements ServletContextListener
 		backgroundScheduler = Executors.newSingleThreadScheduledExecutor();
 		backgroundScheduler.scheduleAtFixedRate(new WUUploaderThread(), 1, 10, TimeUnit.MINUTES);
 		backgroundScheduler.scheduleAtFixedRate(new AggregatedCalculatorThread(), 0, 3, TimeUnit.HOURS);
+		backgroundScheduler.scheduleAtFixedRate(new LuxUpdateThread(), 0, 12, TimeUnit.HOURS);
 
 		if (!StringUtils.isEmpty(PropertyWatcher.get("latitude")) && !StringUtils.isEmpty(PropertyWatcher.get("longitude")))
 		{

@@ -26,7 +26,7 @@ public class SchemaVersion implements Serializable {
     private String installedBy;
     private Timestamp installedOn;
     private Integer executionTime;
-    private Boolean success;
+    private Byte success;
 
     public SchemaVersion() {}
 
@@ -53,7 +53,7 @@ public class SchemaVersion implements Serializable {
         String installedBy,
         Timestamp installedOn,
         Integer executionTime,
-        Boolean success
+        Byte success
     ) {
         this.installedRank = installedRank;
         this.version = version;
@@ -196,14 +196,14 @@ public class SchemaVersion implements Serializable {
     /**
      * Getter for <code>weatherstation_db.schema_version.success</code>.
      */
-    public Boolean getSuccess() {
+    public Byte getSuccess() {
         return this.success;
     }
 
     /**
      * Setter for <code>weatherstation_db.schema_version.success</code>.
      */
-    public void setSuccess(Boolean success) {
+    public void setSuccess(Byte success) {
         this.success = success;
     }
 

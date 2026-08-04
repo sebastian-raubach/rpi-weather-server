@@ -96,7 +96,7 @@ public class Measurements extends TableImpl<MeasurementsRecord> {
     /**
      * The column <code>weatherstation_db.measurements.rainfall</code>.
      */
-    public final TableField<MeasurementsRecord, BigDecimal> RAINFALL = createField(DSL.name("rainfall"), SQLDataType.DECIMAL(6, 2), this, "");
+    public final TableField<MeasurementsRecord, BigDecimal> RAINFALL = createField(DSL.name("rainfall"), SQLDataType.DECIMAL(10, 2), this, "");
 
     /**
      * The column <code>weatherstation_db.measurements.pi_temp</code>.

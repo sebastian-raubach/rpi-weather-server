@@ -99,7 +99,7 @@ public class SchemaVersion extends TableImpl<SchemaVersionRecord> {
     /**
      * The column <code>weatherstation_db.schema_version.success</code>.
      */
-    public final TableField<SchemaVersionRecord, Boolean> SUCCESS = createField(DSL.name("success"), SQLDataType.BOOLEAN.nullable(false), this, "");
+    public final TableField<SchemaVersionRecord, Byte> SUCCESS = createField(DSL.name("success"), SQLDataType.TINYINT.nullable(false), this, "");
 
     private SchemaVersion(Name alias, Table<SchemaVersionRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

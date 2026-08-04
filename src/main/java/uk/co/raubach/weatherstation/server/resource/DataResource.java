@@ -4,10 +4,11 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.*;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.jooq.tools.StringUtils;
 import uk.co.raubach.weatherstation.resource.*;
 import uk.co.raubach.weatherstation.server.database.Database;
-import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.Measurements;
+import uk.co.raubach.weatherstation.server.database.codegen.tables.pojos.*;
 import uk.co.raubach.weatherstation.server.database.codegen.tables.records.MeasurementsRecord;
 import uk.co.raubach.weatherstation.server.util.*;
 
@@ -21,6 +22,7 @@ import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.LuxClimatology.LUX_CLIMATOLOGY;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 
 @jakarta.ws.rs.Path("data")
@@ -167,6 +169,68 @@ public class DataResource extends ContextResource
 		{
 			return Response.noContent().build();
 		}
+	}
+
+	@GET
+	@Path("/lux")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDataLux(@QueryParam("start") String startString, @QueryParam("end") String endString)
+			throws SQLException
+	{
+		Timestamp start = getDate(startString, true);
+		Timestamp end = getDate(endString, false);
+
+		List<Measurements> result = new ArrayList<>();
+
+		if (start != null && end != null)
+		{
+			LocalDate startDate = start.toLocalDateTime().toLocalDate();
+			LocalDate endDate = end.toLocalDateTime().toLocalDate();
+
+			Row2<Integer, Integer> monthDay = DSL.row(LUX_CLIMATOLOGY.MONTH, LUX_CLIMATOLOGY.DAY);
+			Row2<Integer, Integer> startMd = DSL.row(startDate.getMonthValue(), startDate.getDayOfMonth());
+			Row2<Integer, Integer> endMd = DSL.row(endDate.getMonthValue(), endDate.getDayOfMonth());
+
+			boolean wrapsYearBoundary = startDate.getMonthValue() > endDate.getMonthValue()
+					|| (startDate.getMonthValue() == endDate.getMonthValue() && startDate.getDayOfMonth() > endDate.getDayOfMonth());
+
+			Condition condition = wrapsYearBoundary
+					? monthDay.ge(startMd).or(monthDay.le(endMd))   // e.g. Dec 20 -> Jan 10
+					: monthDay.ge(startMd).and(monthDay.le(endMd));  // e.g. Jul 1 -> Jul 31
+
+			try (Connection conn = Database.getDirectConnection())
+			{
+				DSLContext context = Database.getContext(conn);
+
+				LocalDate current = startDate;
+				while (!current.isAfter(endDate))
+				{
+					List<LuxClimatology> luxClimatologies = context.select(LUX_CLIMATOLOGY.MONTH, LUX_CLIMATOLOGY.DAY, LUX_CLIMATOLOGY.SLOT_TIME, LUX_CLIMATOLOGY.P95_LUX_SMOOTH)
+					                                               .from(LUX_CLIMATOLOGY)
+					                                               .where(LUX_CLIMATOLOGY.MONTH.eq(current.getMonthValue()))
+					                                               .and(LUX_CLIMATOLOGY.DAY.eq(current.getDayOfMonth()))
+					                                               .fetchInto(LuxClimatology.class);
+
+					for (LuxClimatology v : luxClimatologies)
+					{
+						Measurements m = new Measurements();
+						m.setLux(BigDecimal.valueOf(v.getP95LuxSmooth()));
+						m.setCreated(Timestamp.valueOf(current.atTime(v.getSlotTime().toLocalTime())));
+
+						result.add(m);
+					}
+
+					current = current.plusDays(1);
+				}
+			}
+		}
+		else
+		{
+			return Response.noContent().build();
+		}
+
+		return Response.ok(result).build();
 	}
 
 	@GET
