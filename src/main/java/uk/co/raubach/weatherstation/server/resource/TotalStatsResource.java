@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.Aggregated.AGGREGATED;
+import static uk.co.raubach.weatherstation.server.database.codegen.tables.Measurements.MEASUREMENTS;
 import static uk.co.raubach.weatherstation.server.database.codegen.tables.ViewPeriods.VIEW_PERIODS;
 
 @Path("stats/total")
@@ -29,6 +30,11 @@ public class TotalStatsResource extends ContextResource
 			AggregatedStats result = new AggregatedStats();
 			result.setAvgTemp(context.select(DSL.avg(AGGREGATED.AVG_AMBIENT_TEMP)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));
 			result.setTotalRain(context.select(DSL.sum(AGGREGATED.SUM_RAINFALL)).from(AGGREGATED).fetchAnyInto(BigDecimal.class));
+			result.setMostIntenseRain(context.select(MEASUREMENTS.CREATED.as("date"), MEASUREMENTS.RAINFALL.times(12).as("value"))
+			                                 .from(MEASUREMENTS)
+			                                 .orderBy(MEASUREMENTS.RAINFALL.desc())
+			                                 .limit(1)
+			                                 .fetchAnyInto(Day.class));
 			result.setMostRain(context.select(AGGREGATED.DATE.as("date"), AGGREGATED.SUM_RAINFALL.as("value"))
 			                          .from(AGGREGATED)
 			                          .orderBy(AGGREGATED.SUM_RAINFALL.desc())

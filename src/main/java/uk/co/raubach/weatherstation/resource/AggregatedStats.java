@@ -15,6 +15,7 @@ public class AggregatedStats
 	private Day        highestTemp;
 	private Day        lowestTemp;
 	private Day        mostRain;
+	private Day        mostIntenseRain;
 	private Day        mostWind;
 	private BigDecimal minTemp;
 	private BigDecimal avgTemp;
