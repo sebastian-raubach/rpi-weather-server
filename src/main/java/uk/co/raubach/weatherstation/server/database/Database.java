@@ -44,7 +44,7 @@ public class Database
 		Database.password = password;
 
 		GLOBAL_SETTINGS = new Settings()
-				.withQueryTimeout(30)
+				.withQueryTimeout(180)
 				.withRenderMapping(new RenderMapping()
 						.withSchemata(
 								new MappedSchema().withInput(WeatherstationDb.WEATHERSTATION_DB.getQualifiedName().first())
